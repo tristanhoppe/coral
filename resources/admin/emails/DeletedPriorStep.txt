@@ -1,5 +1,0 @@
-For resource: <ResourceTitle>
-
-The prior step has been deleted and now the resource is in your queue.
-
-Visit the record at <ResourceRecordURL><ResourceID>
