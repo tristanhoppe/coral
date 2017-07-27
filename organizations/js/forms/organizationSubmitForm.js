@@ -73,7 +73,6 @@ $(function(){
                     $("#retrieveVendor").hide();
                     $("#submitOrganizationChanges").removeAttr("disabled");
                 }else{
-                    //$("#ils_span").html(_("This vendor exists in the ILS.") + '<a href="javascript:retrieveVendor();" id="retrieveVendor">' + _("Retrieve its informations.") + "</a>");
                     $("#ils_span").html(_("This vendor exists in the ILS."));
                     $("#retrieveVendor").show();
                 }
