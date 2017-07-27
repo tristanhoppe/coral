@@ -1,12 +1,14 @@
 <?php
 	$resourceID = $_GET['resourceID'];
+    $resourceAcquisitionID = $_GET['resourceAcquisitionID'];
 	$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+    $resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
 
 		//get attachments
 		$sanitizedInstance = array();
 		$attachmentArray = array();
-		foreach ($resource->getAttachments() as $instance) {
+		foreach ($resourceAcquisition->getAttachments() as $instance) {
 			foreach (array_keys($instance->attributeNames) as $attributeName) {
 				$sanitizedInstance[$attributeName] = $instance->$attributeName;
 			}
@@ -69,7 +71,7 @@
 
 		if ($user->canEdit()){
 		?>
-		<a href='ajax_forms.php?action=getAttachmentForm&height=305&width=360&modal=true&resourceID=<?php echo $resourceID; ?>' class='thickbox' id='newAttachment'><?php echo _("add new attachment");?></a><br /><br />
+		<a href='ajax_forms.php?action=getAttachmentForm&height=305&width=360&modal=true&resourceID=<?php echo $resourceID; ?>&resourceAcquisitionID=<?php echo $resourceAcquisitionID; ?>' class='thickbox' id='newAttachment'><?php echo _("add new attachment");?></a><br /><br />
 		<?php
 		}
 ?>

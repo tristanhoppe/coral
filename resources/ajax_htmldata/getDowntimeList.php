@@ -1,8 +1,10 @@
 <?php
 $resourceID = $_GET['resourceID'];
+$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
 $archivedFlag = (!empty($_GET['archived']) && $_GET['archived'] == 1) ? true:false;
 
 $resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 $util = new Utility();
 
 
@@ -43,7 +45,7 @@ function generateDowntimeHTML($downtime,$associatedEntities=null) {
 	$html .= "
 		</dl>
 	</div>";
-
+	
 	return $html;
 }
 
@@ -75,13 +77,13 @@ if (count($organizationArray) > 0) {
 }
 
 //display any resource level downtimes for the resource (shows any other resources associated with the downtime, too)
-$resourceDowntimes = $resource->getDowntime($archivedFlag);
+$resourceDowntimes = $resourceAcquisition->getDowntime($archivedFlag);
 echo '<h3 class="text-center">' . _("Resources") . '</h3>';
 if(count($resourceDowntimes) > 0) {
 	foreach ($resourceDowntimes as $downtime) {
 		echo generateDowntimeHTML($downtime);
 	}
 } else {
-	echo "<br><p>" . _("There are no resource level downtimes.") . "</p><br>";
+	echo "<br><p>" . _("There are no order level downtimes.") . "</p><br>";
 }
 ?>

@@ -1381,6 +1381,24 @@ a.showWorkflow:hover {
 			color: #ccc;
 }
 
+a.showOrders:before {
+	font-family: FontAwesome;
+	content: "\f080";
+	font-size: 11px;
+	margin-right: 5px;
+}
+
+a.showOrders {
+			text-decoration: none;
+			text-transform: capitalize;
+			font-size: 12px;
+}
+
+a.showOrders:hover {
+			color: #ccc;
+}
+
+
 /*---------------*/
 
 td.searchRow > b {

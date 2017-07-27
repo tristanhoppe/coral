@@ -1,8 +1,8 @@
 <?php
 	//number of attachments, used to display on the tab so user knows whether to look on tab
-		$resourceID = $_GET['resourceID'];
-		$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+		$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
+		$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
-		echo count($resource->getAttachments());
+		echo count($resourceAcquisition->getAttachments());
 ?>
 

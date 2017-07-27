@@ -1,12 +1,14 @@
 <?php
 		$resourceID = $_GET['resourceID'];
+		$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
 		$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+		$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 		$status = new Status();
 
 		$completeStatusID = $status->getIDFromName('complete');
 		$archiveStatusID = $status->getIDFromName('archive');
 
-		$resourceSteps = $resource->getResourceSteps();
+		$resourceSteps = $resourceAcquisition->getResourceSteps();
 
 		if (count($resourceSteps) == "0"){
 			if (($resource->statusID != $completeStatusID) && ($resource->statusID != $archiveStatusID)){
@@ -48,13 +50,13 @@
                     $archivingDate = $resourceStep->archivingDate;
                     $stepIndication = $resourceStep->archivingDate ? _("Workflow archived on") . " $archivingDate" : _("Current workflow");
                     if ($resourceStep->archivingDate && $archivedWorkflow == false) {
-                        $archivedWorkflow = true;
+                        $archivedWorkflow = true; 
                         echo "<td colspan='6'><em><strong>Archived Workflows</strong></em></td></tr><tr$stepClass>";
                     }
 
                     echo "<td colspan='6'><em><strong>$stepIndication</strong></em></td></tr><tr$stepClass>";
                 }
-                ?>
+                ?> 
 
 				<td <?php echo $classAdd; ?> ><?php echo $resourceStep->stepName; ?></td>
 				<td <?php echo $classAdd; ?> ><?php if (is_null_date($resourceStep->stepEndDate)){
@@ -123,7 +125,7 @@
                 <div class="restartWorkflowDiv" id="restartWorkflowDiv" style="display:none;padding:20px;">
                     <form name="restartWorkflowForm" id="restartWorkflowForm">
 
-                        <label for="workflowArchivingDate"><?php echo _("Select a workflow to restart"); ?></label>:
+                        <label for="workflowArchivingDate"><?php echo _("Select a workflow to restart"); ?></label>: 
                         <select id="workflowArchivingDate">
                             <option value="<?php echo $resource->getCurrentWorkflowID(); ?>"><?php echo _("Current workflow"); ?></option>
                             <?php
@@ -154,15 +156,15 @@
                             }
                             ?>
                         </select><br />
-                        <input type="button" value="submit" class="restartWorkflowSubmit" id="<?php echo $resourceID; ?>" />
+                        <input type="button" value="submit" class="restartWorkflowSubmit" id="<?php echo $resourceAcquisitionID; ?>" />
                     </form>
                     <br />
                 </div>
                 <?php
-				echo "<img id='displayArchivedWorkflowsIcon' src='images/plus_12.gif' />&nbsp;&nbsp;<a href='javascript:void(0);' class='displayArchivedWorkflows' id='" . $resourceID . "'>"._("display archived workflows")."</a><br />";
-				echo "<img src='images/pencil.gif' />&nbsp;&nbsp;<a href='ajax_forms.php?action=getCurrentWorkflowForm&height=450&width=750&modal=true&resourceID=$resourceID' class='thickbox'>"._("edit the current workflow")."</a><br />";
+				echo "<img id='displayArchivedWorkflowsIcon' src='images/plus_12.gif' />&nbsp;&nbsp;<a href='javascript:void(0);' class='displayArchivedWorkflows' id='" . $resourceAcquisitionID . "'>"._("display archived workflows")."</a><br />";
+				echo "<img src='images/pencil.gif' />&nbsp;&nbsp;<a href='ajax_forms.php?action=getCurrentWorkflowForm&height=450&width=750&modal=true&resourceAcquisitionID=$resourceAcquisitionID' class='thickbox'>"._("edit the current workflow")."</a><br />";
 
-				echo "<img src='images/pencil.gif' />&nbsp;&nbsp;<a href='javascript:void(0);' class='markResourceComplete' id='" . $resourceID . "'>"._("mark entire workflow complete")."</a><br />";
+				echo "<img src='images/pencil.gif' />&nbsp;&nbsp;<a href='javascript:void(0);' class='markResourceComplete' id='" . $resourceAcquisitionID . "'>"._("mark entire workflow complete")."</a><br />";
 		}
 
 ?>

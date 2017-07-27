@@ -7,6 +7,7 @@ if ($_POST['sourceOrganizationID']) {
 	$newDowntime->entityTypeID = 1;
 } else {
 	$newDowntime->entityID = $_POST['sourceResourceID'];
+	$newDowntime->resourceAcquisitionID = $_POST['sourceResourceAcquisitionID'];
 	$newDowntime->entityTypeID = 2;
 }
 

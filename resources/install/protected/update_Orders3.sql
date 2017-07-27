@@ -1,0 +1,22 @@
+ALTER TABLE `Resource`
+  DROP `workflowRestartDate`,
+  DROP `workflowRestartLoginID`,
+  DROP `orderNumber`,
+  DROP `systemNumber`,
+  DROP `subscriptionAlertEnabledInd`,
+  DROP `userLimitID`,
+  DROP `authenticationUserName`,
+  DROP `authenticationPassword`,
+  DROP `storageLocationID`,
+  DROP `acquisitionTypeID`,
+  DROP `authenticationTypeID`,
+  DROP `accessMethodID`,
+  DROP `recordSetIdentifier`,
+  DROP `hasOclcHoldings`,
+  DROP `numberRecordsAvailable`,
+  DROP `numberRecordsLoaded`,
+  DROP `bibSourceURL`,
+  DROP `catalogingTypeID`,
+  DROP `catalogingStatusID`,
+  DROP `coverageText`;
+

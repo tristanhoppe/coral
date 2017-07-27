@@ -2,7 +2,9 @@
 $util = new utility();
 
 $resourceID = $_GET["resourceID"];
+$resourceAcquisitionID = $_GET["resourceAcquisitionID"];
 
+$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 $resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
 
 $organizationArray = $resource->getOrganizationArray();
@@ -10,7 +12,7 @@ $organizationData = $organizationArray[0];
 
 //the issues feature currently support org or resource contacts, but not both
 $moduleFilter = ($config->settings->organizationsModule == 'Y') ? 'organizations':'resources';
-$contactsArray = $resource->getUnarchivedContacts($moduleFilter);
+$contactsArray = $resourceAcquisition->getUnarchivedContacts($moduleFilter);
 if ($organizationData['organizationID']) {
 	$organizationResourcesArray = $resource->getSiblingResourcesArray($organizationData['organizationID']);
 ?>
@@ -18,6 +20,7 @@ if ($organizationData['organizationID']) {
 <form id='newIssueForm'>
 	<input type="hidden" id="sourceOrganizationID" name="sourceOrganizationID" value="<?php echo $organizationData['organizationID'];?>" />
 	<input type="hidden" name="sourceResourceID" value="<?php echo $resourceID;?>" />
+	<input type="hidden" name="sourceResourceAcquisitionID" value="<?php echo $resourceAcquisitionID;?>" />
 	<table class="thickboxTable" style="width:98%;background-image:url('images/title.gif');background-repeat:no-repeat;">
 		<tr>
 			<td colspan="2">

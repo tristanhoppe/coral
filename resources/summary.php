@@ -23,6 +23,8 @@ $util = new Utility();
 
 $resourceID = $_GET['resourceID'];
 $resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
+$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
 //used to get default currency
 		$config = new Configuration();
@@ -98,7 +100,7 @@ if ($resource->titleText){
 	$sanitizedInstance = array();
 	$instance = new PurchaseSite();
 	$purchaseSiteArray = array();
-	foreach ($resource->getResourcePurchaseSites() as $instance) {
+	foreach ($resourceAcquisition->getPurchaseSites() as $instance) {
 		$purchaseSiteArray[]=$instance->shortName;
 	}
 
@@ -106,7 +108,7 @@ if ($resource->titleText){
 	$sanitizedInstance = array();
 	$instance = new PurchaseSite();
 	$authorizedSiteArray = array();
-	foreach ($resource->getResourceAuthorizedSites() as $instance) {
+	foreach ($resourceAcquisition->getAuthorizedSites() as $instance) {
 		$authorizedSiteArray[]=$instance->shortName;
 	}
 
@@ -114,7 +116,7 @@ if ($resource->titleText){
 	$sanitizedInstance = array();
 	$instance = new ResourcePayment();
 	$paymentArray = array();
-	foreach ($resource->getResourcePayments() as $instance) {
+	foreach ($resourceAcquisition->getResourcePayments() as $instance) {
 			foreach (array_keys($instance->attributeNames) as $attributeName) {
 				$sanitizedInstance[$attributeName] = $instance->$attributeName;
 			}
@@ -142,7 +144,7 @@ if ($resource->titleText){
 	$sanitizedInstance = array();
 	$instance = new ResourceLicenseStatus();
 	$licenseStatusArray = array();
-	foreach ($resource->getResourceLicenseStatuses() as $instance) {
+	foreach ($resourceAcquisition->getResourceLicenseStatuses() as $instance) {
 			foreach (array_keys($instance->attributeNames) as $attributeName) {
 				$sanitizedInstance[$attributeName] = $instance->$attributeName;
 			}
@@ -167,7 +169,7 @@ if ($resource->titleText){
 
 
 	//get licenses (already returned in array)
-	$licenseArray = $resource->getLicenseArray();
+	$licenseArray = $resourceAcquisition->getLicenseArray();
 
 	$userLimit = new UserLimit(new NamedArguments(array('primaryKey' => $resource->userLimitID)));
 	$storageLocation = new StorageLocation(new NamedArguments(array('primaryKey' => $resource->storageLocationID)));
@@ -178,7 +180,7 @@ if ($resource->titleText){
 	$sanitizedInstance = array();
 	$instance = new AdministeringSite();
 	$administeringSiteArray = array();
-	foreach ($resource->getResourceAdministeringSites() as $instance) {
+	foreach ($resourceAcquisition->getAdministeringSites() as $instance) {
 		$administeringSiteArray[]=$instance->shortName;
 	}
 
@@ -355,7 +357,7 @@ if ($resource->titleText){
 			</tr>
 		<?php
 		}
-
+		
 		if ($resource->descriptionText){ ?>
 			<tr>
 			<td style='vertical-align:top;width:150px;'><?php echo _("Description:");?></td>
@@ -451,7 +453,6 @@ if ($resource->titleText){
 		</tr>
 	<?php } ?>
 
-
 	<?php if (count($purchaseSiteArray) > 0) { ?>
 		<tr>
 		<td style='vertical-align:top;width:150px;'><?php echo _("Purchasing Site:");?></td>
@@ -494,7 +495,7 @@ if ($resource->titleText){
 	</tr>
 
 	<?php
-	if (count($paymentArray) > 0){
+	if (count($paymentArray) > 0){ 
             foreach ($paymentArray as $payment){ ?>
               <tr><td style='vertical-align:top;width:150px;' colspan='2'></td></tr>
             <?php if ($enhancedCostFlag){ ?>
@@ -618,7 +619,7 @@ if ($resource->titleText){
 	//get notes for this tab
 	$sanitizedInstance = array();
 	$noteArray = array();
-	foreach ($resource->getNotes('Acquisitions') as $instance) {
+	foreach ($resourceAcquisition->getNotes('Acquisitions') as $instance) {
 		foreach (array_keys($instance->attributeNames) as $attributeName) {
 			$sanitizedInstance[$attributeName] = $instance->$attributeName;
 		}
@@ -743,7 +744,7 @@ if ($resource->titleText){
 	//get notes for this tab
 	$sanitizedInstance = array();
 	$noteArray = array();
-	foreach ($resource->getNotes('Access') as $instance) {
+	foreach ($resourceAcquisition->getNotes('Access') as $instance) {
 		foreach (array_keys($instance->attributeNames) as $attributeName) {
 			$sanitizedInstance[$attributeName] = $instance->$attributeName;
 		}
@@ -792,51 +793,51 @@ if ($resource->titleText){
         <span style='float:left;vertical-align:bottom;'><?php echo _("Cataloging");?></span>
       </th>
     </tr>
-    <?php if ($resource->hasCatalogingInformation()) { ?>
-      <?php if ($resource->recordSetIdentifier) { ?>
+    <?php if ($resourceAcquisition->hasCatalogingInformation()) { ?>
+      <?php if ($resourceAcquisition->recordSetIdentifier) { ?>
     		<tr>
       		<td style='vertical-align:top;width:150px;'><?php echo _("Identifier:");?></td>
-      		<td><?php echo $resource->recordSetIdentifier; ?></td>
+      		<td><?php echo $resourceAcquisition->recordSetIdentifier; ?></td>
     		</tr>
     	<?php } ?>
-    	<?php if ($resource->bibSourceURL) { ?>
+    	<?php if ($resourceAcquisition->bibSourceURL) { ?>
     		<tr>
       		<td style='vertical-align:top;width:150px;'><?php echo _("URL:");?></td>
-      		<td><?php echo $resource->bibSourceURL; ?></td>
+      		<td><?php echo $resourceAcquisition->bibSourceURL; ?></td>
     		</tr>
     	<?php } ?>
-    	<?php if ($resource->catalogingTypeID) {
-    		$catalogingType = new CatalogingType(new NamedArguments(array('primaryKey' => $resource->catalogingTypeID)));
+    	<?php if ($resourceAcquisition->catalogingTypeID) { 
+    		$catalogingType = new CatalogingType(new NamedArguments(array('primaryKey' => $resourceAcquisition->catalogingTypeID)));
     		?>
     		<tr>
       		<td style='vertical-align:top;width:150px;'><?php echo _("Cataloging Type:");?></td>
       		<td><?php echo $catalogingType->shortName; ?></td>
     		</tr>
     	<?php } ?>
-    	<?php if ($resource->catalogingStatusID) {
-    		$catalogingStatus = new CatalogingStatus(new NamedArguments(array('primaryKey' => $resource->catalogingStatusID)));
+    	<?php if ($resourceAcquisition->catalogingStatusID) { 
+    		$catalogingStatus = new CatalogingStatus(new NamedArguments(array('primaryKey' => $resourceAcquisition->catalogingStatusID)));
     		?>
     		<tr>
       		<td style='vertical-align:top;width:150px;'><?php echo _("Cataloging Status:");?></td>
       		<td><?php echo $catalogingStatus->shortName; ?></td>
     		</tr>
     	<?php } ?>
-    	<?php if ($resource->numberRecordsAvailable) { ?>
+    	<?php if ($resourceAcquisition->numberRecordsAvailable) { ?>
     		<tr>
       		<td style='vertical-align:top;width:150px;'><?php echo _("# Records Available:");?></td>
-      		<td><?php echo $resource->numberRecordsAvailable; ?></td>
+      		<td><?php echo $resourceAcquisition->numberRecordsAvailable; ?></td>
     		</tr>
     	<?php } ?>
-    	<?php if ($resource->numberRecordsLoaded) { ?>
+    	<?php if ($resourceAcquisition->numberRecordsLoaded) { ?>
     		<tr>
       		<td style='vertical-align:top;width:150px;'><?php echo _("# Records Loaded:");?></td>
-      		<td><?php echo $resource->numberRecordsLoaded; ?></td>
+      		<td><?php echo $resourceAcquisition->numberRecordsLoaded; ?></td>
     		</tr>
     	<?php } ?>
-    	<?php if ($resource->hasOclcHoldings) { ?>
+    	<?php if ($resourceAcquisition->hasOclcHoldings) { ?>
     		<tr>
       		<td style='vertical-align:top;width:150px;'><?php echo _("OCLC Holdings:");?></td>
-      		<td><?php echo $resource->hasOclcHoldings ? _('Yes') : _('No'); ?></td>
+      		<td><?php echo $resourceAcquisition->hasOclcHoldings ? _('Yes') : _('No'); ?></td>
     		</tr>
     	<?php } ?>
     <?php } else { ?>
@@ -856,7 +857,7 @@ if ($resource->titleText){
 	//get notes for this tab
 	$sanitizedInstance = array();
 	$noteArray = array();
-	foreach ($resource->getNotes('Cataloging') as $instance) {
+	foreach ($resourceAcquisition->getNotes('Cataloging') as $instance) {
 		foreach (array_keys($instance->attributeNames) as $attributeName) {
 			$sanitizedInstance[$attributeName] = $instance->$attributeName;
 		}

@@ -1,5 +1,6 @@
 <?php
 	$resourceID = $_GET['resourceID'];
+	$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
 	if (isset($_GET['attachmentID'])) $attachmentID = $_GET['attachmentID']; else $attachmentID = '';
 	$attachment = new Attachment(new NamedArguments(array('primaryKey' => $attachmentID)));
 
@@ -11,6 +12,7 @@
 		<div id='div_attachmentForm'>
 		<form id='attachmentForm'>
 		<input type='hidden' name='editResourceID' id='editResourceID' value='<?php echo $resourceID; ?>'>
+		<input type='hidden' name='editResourceAcquisitionID' id='editResourceAcquisitionID' value='<?php echo isset($resourceAcquisitionID) ? $resourceAcquisitionID : $attachment->resourceAcquisitionID; ?>'>
 		<input type='hidden' name='editAttachmentID' id='editAttachmentID' value='<?php echo $attachmentID; ?>'>
 
 		<div class='formTitle' style='width:345px;'><span class='headerText' style='margin-left:7px;'><?php if ($attachmentID){ echo _("Edit Attachment"); } else { echo _("Add Attachment"); } ?></span></div>

@@ -1,8 +1,6 @@
 <?php
 
-		$resourceID = $_POST['resourceID'];
-
-        $resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+		$resourceAcquisitionID = $_POST['resourceAcquisitionID'];
 
 		try {
 
@@ -68,7 +66,7 @@
                     }
 
 					$rstep->displayOrderSequence = $seqOrderArray[$key];
-					$rstep->resourceID = $resourceID;
+					$rstep->resourceAcquisitionID = $resourceAcquisitionID;
 					$rstep->userGroupID = $userGroupArray[$key];
 					$rstep->mailReminderDelay = $mailReminderDelayArray[$key];
                     if ($rstep->priorStepID == null) {

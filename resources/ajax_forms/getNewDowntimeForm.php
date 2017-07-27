@@ -4,9 +4,11 @@ $util = new utility();
 $organizationID = $_GET["organizationID"];
 
 $resourceID = $_GET["resourceID"];
+$resourceAcquisitionID = $_GET["resourceAcquisitionID"];
 $issueID = $_GET['issueID'];
 
 $resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
 $isOrgDowntime = false;
 if ($organizationID) {
@@ -14,7 +16,7 @@ if ($organizationID) {
 	$issues = $organization->getIssues();
 	$isOrgDowntime = true;
 } else {
-	$issues = $resource->getIssues();
+	$issues = $resourceAcquisition->getIssues();
 
 	$organizationArray = $resource->getOrganizationArray();
 	$organizationData = $organizationArray[0];
@@ -46,6 +48,7 @@ if ($isOrgDowntime) {
 	echo '<input type="hidden" name="sourceOrganizationID" value="'.$organizationID.'" />';
 } else {
 	echo '<input type="hidden" name="sourceResourceID" value="'.$resourceID.'" />';
+	echo '<input type="hidden" name="sourceResourceAcquisitionID" value="'.$resourceAcquisitionID.'" />';
 }
 ?>
 	<table class="thickboxTable" style="width:98%;background-image:url('images/title.gif');background-repeat:no-repeat;">

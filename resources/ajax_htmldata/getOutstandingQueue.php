@@ -18,6 +18,7 @@
 			<tr>
 				<th style='width:45px;'><?php echo _("ID");?></th>
 				<th style='width:300px;'><?php echo _("Name");?></th>
+				<th style='width:300px;'><?php echo _("Order");?></th>
 				<th style='width:95px;'><?php echo _("Acquisition Type");?></th>
 				<th style='width:125px;'><?php echo _("Workflow Step");?></th>
 				<th style='width:75px;'><?php echo _("Start Date");?></th>
@@ -44,8 +45,9 @@
 
 		?>
 				<tr id='tr_<?php echo $resource['resourceID']; ?>' style='padding:0px;margin:0px;height:100%;'>
-					<td <?php echo $classAdd; ?>><a href='resource.php?resourceID=<?php echo $resource['resourceID']; ?>'><?php echo $resource['resourceID']; ?></a></td>
-					<td <?php echo $classAdd; ?>><a href='resource.php?resourceID=<?php echo $resource['resourceID']; ?>'><?php echo $resource['titleText']; ?></a></td>
+					<td <?php echo $classAdd; ?>><a href='resource.php?resourceID=<?php echo $resource['resourceID']; ?>&resourceAcquisitionID=<?php echo $resource['resourceAcquisitionID']?>'><?php echo $resource['resourceID']; ?></a></td>
+					<td <?php echo $classAdd; ?>><a href='resource.php?resourceID=<?php echo $resource['resourceID']; ?>&resourceAcquisitionID=<?php echo $resource['resourceAcquisitionID']?>'><?php echo $resource['titleText']; ?></a></td>
+					<td <?php echo $classAdd; ?>><?php echo $resource['subscriptionStartDate']; ?> - <?php echo $resource['subscriptionEndDate']; ?></a></td>
 					<td <?php echo $classAdd; ?>><?php echo $acquisitionType->shortName; ?></td>
 
 					<?php
@@ -57,6 +59,7 @@
 								if ($j > 0){
 								?>
 								<tr>
+								<td <?php echo $classAdd; ?> style='border-top-style:none;'>&nbsp;</td>
 								<td <?php echo $classAdd; ?> style='border-top-style:none;'>&nbsp;</td>
 								<td <?php echo $classAdd; ?> style='border-top-style:none;'>&nbsp;</td>
 								<td <?php echo $classAdd; ?> style='border-top-style:none;'>&nbsp;</td>

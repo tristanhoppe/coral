@@ -17,7 +17,6 @@
 				<th><?php echo _("ID");?></th>
 				<th><?php echo _("Name");?></th>
 				<th><?php echo _("Date Created");?></th>
-				<th><?php echo _("Acquisition Type");?></th>
 				<th><?php echo _("Status");?></th>
 				<th>&nbsp;</th>
 			</tr>
@@ -33,7 +32,6 @@
 					$classAdd="class='alt'";
 				}
 
-				$acquisitionType = new AcquisitionType(new NamedArguments(array('primaryKey' => $resource['acquisitionTypeID'])));
 				$status = new Status(new NamedArguments(array('primaryKey' => $resource['statusID'])));
 
 
@@ -43,7 +41,6 @@
 					<td <?php echo $classAdd; ?>><a href='ajax_forms.php?action=getNewResourceForm&height=483&width=775&resourceID=<?php echo $resource['resourceID']; ?>&modal=true' class='thickbox'><?php echo $resource['resourceID']; ?></a></td>
 					<td <?php echo $classAdd; ?>><a href='ajax_forms.php?action=getNewResourceForm&height=483&width=775&resourceID=<?php echo $resource['resourceID']; ?>&modal=true' class='thickbox'><?php echo $resource['titleText']; ?></a></td>
 					<td <?php echo $classAdd; ?>><?php echo $resource['createDate']; ?></td>
-					<td <?php echo $classAdd; ?>><?php echo $acquisitionType->shortName; ?></td>
 					<td <?php echo $classAdd; ?>><?php echo $status->shortName; ?></td>
 					<td <?php echo $classAdd; ?> style='text-align:right; width:40px;'>
 					<a href='ajax_forms.php?action=getNewResourceForm&height=483&width=775&resourceID=<?php echo $resource['resourceID']; ?>&modal=true' class='thickbox'><img src='images/edit.gif' alt='<?php echo _("edit");?>' title='<?php echo _("edit request");?>'></a>&nbsp;

@@ -1,25 +1,27 @@
 <?php
 		$resourceID = $_POST['resourceID'];
+		$resourceAcquisitionID = $_POST['resourceAcquisitionID'];
 		$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+		$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
-		$resource->authenticationTypeID 	= $_POST['authenticationTypeID'];
-		$resource->accessMethodID 			= $_POST['accessMethodID'];
-		$resource->coverageText 			= $_POST['coverageText'];
-		$resource->authenticationUserName 	= $_POST['authenticationUserName'];
-		$resource->authenticationPassword	= $_POST['authenticationPassword'];
-		$resource->storageLocationID		= $_POST['storageLocationID'];
-		$resource->userLimitID				= $_POST['userLimitID'];
+		$resourceAcquisition->authenticationTypeID 	    = $_POST['authenticationTypeID'];
+		$resourceAcquisition->accessMethodID 			= $_POST['accessMethodID'];
+		$resourceAcquisition->coverageText 			    = $_POST['coverageText'];
+		$resourceAcquisition->authenticationUserName 	= $_POST['authenticationUserName'];
+		$resourceAcquisition->authenticationPassword	= $_POST['authenticationPassword'];
+		$resourceAcquisition->storageLocationID 		= $_POST['storageLocationID'];
+		$resourceAcquisition->userLimitID		    	= $_POST['userLimitID'];
 
 		try {
-			$resource->save();
+			$resourceAcquisition->save();
 
 			//first remove all administering sites, then we'll add them back
-			$resource->removeAdministeringSites();
+			$resourceAcquisition->removeAdministeringSites();
 
 			foreach (explode(':::',$_POST['administeringSites']) as $key => $value){
 				if ($value){
 					$resourceAdministeringSiteLink = new ResourceAdministeringSiteLink();
-					$resourceAdministeringSiteLink->resourceID = $resourceID;
+					$resourceAdministeringSiteLink->resourceAcquisitionID = $resourceAcquisitionID;
 					$resourceAdministeringSiteLink->administeringSiteID = $value;
 					try {
 						$resourceAdministeringSiteLink->save();
@@ -37,7 +39,7 @@
 			foreach (explode(':::',$_POST['authorizedSites']) as $key => $value){
 				if ($value){
 					$resourceAuthorizedSiteLink = new ResourceAuthorizedSiteLink();
-					$resourceAuthorizedSiteLink->resourceID = $resourceID;
+					$resourceAuthorizedSiteLink->resourceAcquisitionID = $resourceAcquisitionID;
 					$resourceAuthorizedSiteLink->authorizedSiteID = $value;
 					try {
 						$resourceAuthorizedSiteLink->save();

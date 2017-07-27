@@ -1,6 +1,8 @@
 <?php
 	$resourceID = $_GET['resourceID'];
+	$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
 	$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+	$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
 		$config=new Configuration();
 
@@ -37,7 +39,7 @@
 		$licenseArray = $resource->getLicenseArray();
 
 		echo "<div style='background-color:white; width:219px; padding:7px;'>";
-		echo "<div class='rightPanelLink'><a href='summary.php?resourceID=" . $resource->resourceID . "' target='_blank' class='helpfulLink'>"._("Print View")."</a></div>";
+		echo "<div class='rightPanelLink'><a href='summary.php?resourceID=" . $resource->resourceID . "&resourceAcquisitionID=" . $resourceAcquisitionID . "' target='_blank' class='helpfulLink'>"._("Print View")."</a></div>";
 		if (($resource->systemNumber) && ($config->settings->catalogURL != '')) {
 			echo "<div class='rightPanelLink'><a href='" . $config->settings->catalogURL . $resource->systemNumber . "' target='_blank'>"._("Catalog View")."</a></div>";
 		}

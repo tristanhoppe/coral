@@ -1,5 +1,6 @@
 <?php
 	$resourceID = $_GET['resourceID'];
+	$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
 	if (isset($_GET['contactID'])) $contactID = $_GET['contactID']; else $contactID = '';
 	$contact = new Contact(new NamedArguments(array('primaryKey' => $contactID)));
 
@@ -25,6 +26,7 @@
 		<div id='div_contactForm'>
 		<form id='contactForm'>
 		<input type='hidden' name='editResourceID' id='editResourceID' value='<?php echo $resourceID; ?>'>
+		<input type='hidden' name='editResourceAcquisitionID' id='editResourceAcquisitionID' value='<?php echo $resourceAcquisitionID; ?>'>
 		<input type='hidden' name='editContactID' id='editContactID' value='<?php echo $contactID; ?>'>
 
 		<div class='formTitle' style='width:603px;'><span class='headerText' style='margin-left:7px;'><?php if ($contactID){ echo _("Edit Contact"); } else { echo _("Add Contact"); } ?></span></div>

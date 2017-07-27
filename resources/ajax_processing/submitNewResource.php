@@ -57,6 +57,13 @@
 			echo $resource->primaryKey;
 			$resourceID=$resource->primaryKey;
 
+            // Create the default order
+            $resourceAcquisition = new ResourceAcquisition();
+            $resourceAcquisition->resourceID = $resourceID;
+            $resourceAcquisition->subscriptionStartDate = date("Y-m-d");
+            $resourceAcquisition->subscriptionEndDate = date("Y-m-d");
+            $resourceAcquisition->save();
+
 			//get the provider ID in case we insert what was entered in the provider text box as an organization link
 			$organizationRole = new OrganizationRole();
 			$organizationRoleID = $organizationRole->getProviderID();
@@ -111,6 +118,8 @@
 			$costNoteArray      = array();  $costNoteArray      = explode(':::',$_POST['costNotes']);
 			$invoiceArray       = array();  $invoiceArray       = explode(':::',$_POST['invoices']);
 
+            // Is this really needed ?
+/*
 			//first remove all payment records, then we'll add them back
 			$resource->removeResourcePayments();
 
@@ -135,7 +144,7 @@
 					}
 				}
 			}
-
+*/
 
 
 			//next if the resource was submitted, enter into workflow

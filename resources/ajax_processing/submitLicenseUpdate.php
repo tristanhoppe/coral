@@ -1,10 +1,11 @@
 <?php
-		$resourceID = $_POST['resourceID'];
-		$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+		$resourceAcquisitionID = $_POST['resourceAcquisitionID'];
+		$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
-		if (($_POST['licenseStatusID']) && ($_POST['licenseStatusID'] != $resource->getCurrentResourceLicenseStatus())){
+
+		if (($_POST['licenseStatusID']) && ($_POST['licenseStatusID'] != $resourceAcquisition->getCurrentResourceLicenseStatus())){
 			$resourceLicenseStatus = new ResourceLicenseStatus();
-			$resourceLicenseStatus->resourceID 					= $resourceID;
+			$resourceLicenseStatus->resourceAcquisitionID    	= $resourceAcquisitionID;
 			$resourceLicenseStatus->licenseStatusID 			= $_POST['licenseStatusID'];
 			$resourceLicenseStatus->licenseStatusChangeLoginID 	= $loginID;
 			$resourceLicenseStatus->licenseStatusChangeDate 	= date( 'Y-m-d H:i:s' );
@@ -15,12 +16,12 @@
 		try {
 
 			//first remove all license links, then we'll add them back
-			$resource->removeResourceLicenses();
+			$resourceAcquisition->removeResourceLicenses();
 
 			foreach (explode(':::',$_POST['licenseList']) as $key => $value){
 				if ($value){
 					$resourceLicenseLink = new ResourceLicenseLink();
-					$resourceLicenseLink->resourceID = $resourceID;
+					$resourceLicenseLink->resourceAcquisitionID = $resourceAcquisitionID;
 					$resourceLicenseLink->licenseID = $value;
 					try {
 						$resourceLicenseLink->save();

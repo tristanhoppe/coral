@@ -54,7 +54,7 @@
 	 });
 
 
-    	$('.changeInput').addClass("idleField");
+	$('.changeInput').addClass("idleField");
 
 	$('.changeInput').live('focus', function() {
 
@@ -95,6 +95,28 @@
 	$('textarea').blur(function() {
 		$(this).removeClass("focusField").addClass("idleField");
 	});
+
+    $(".organizationName").autocomplete('ajax_processing.php?action=getOrganizationList', {
+        minChars: 2,
+        max: 20,
+        mustMatch: false,
+        width: 164,
+        delay: 10,
+        matchContains: true,
+        formatItem: function(row) {
+            return "<span style='font-size: 80%;'>" + row[0] + "</span>";
+        },
+        formatResult: function(row) {
+            return row[0].replace(/(<.+?>)/gi, '');
+        }
+
+    });
+
+
+    //once something has been selected, change the hidden input value
+    $(".organizationName").result(function(event, data, formatted) {
+        $(this).parent().children('.organizationID').val(data[1]);
+    });
 
 
 
@@ -185,17 +207,20 @@ function submitOrderForm(){
 	});
 
 	if (validateForm() === true) {
-		$('#submitOrder').attr("disabled", "disabled");
+		$('#submitOrder').attr("disabled", "disabled"); 
 		  $.ajax({
 			 type:  "POST",
 			 url:   "ajax_processing.php?action=submitAcquisitions",
 			 cache: false,
-			 data:  { resourceID: $("#editResourceID").val(),
+			 data:  { resourceAcquisitionID: $("#editResourceAcquisitionID").val(),
+                      resourceID: $("#editResourceID").val(),
+                      op: $("#op").val(),
                       acquisitionTypeID: $("#acquisitionTypeID").val(),
                       orderNumber: $("#orderNumber").val(),
                       systemNumber: $("#systemNumber").val(),
                       currentStartDate: $("#currentStartDate").val(),
                       currentEndDate: $("#currentEndDate").val(),
+                      organizationID: $("#organizationID").val(),
                       subscriptionAlertEnabledInd: $("#subscriptionAlertEnabledInd:checked").val(),
                       purchaseSites: purchaseSitesList,
                     },
@@ -204,10 +229,23 @@ function submitOrderForm(){
 					$("#span_errors").html(html);
 					$("#submitOrder").removeAttr("disabled");
 				}else{
-					kill();
-					window.parent.tb_remove();
-					window.parent.updateAcquisitions();
-					return false;
+                    if ($("#editResourceAcquisitionID").val() == '' || $("#op").val() == 'clone') {
+                        //TODO: it would be better to go directly to the newly created order
+                        var newLoc = location.search;
+                        if (newLoc.includes('showTab')) {
+                            newLoc = newLoc.replace(/showTab=[^&$]*/i, 'showTab=Orders');
+                        } else {
+                            newLoc += "&showTab=Orders";
+                        }
+                        location.search = newLoc;
+
+                    } else {
+                        kill();
+                        window.parent.tb_remove();
+                        window.parent.updateOrders();
+                        window.parent.updateRightPanel();
+                        return false;
+                    }
 				}
 
 			 }
@@ -234,12 +272,12 @@ function submitOrderForm(){
 	}
 
  	if (myReturn == "1"){
-		return false;
+		return false; 	
  	}else{
  		return true;
  	}
 }
-
+ 
 
 
 

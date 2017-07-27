@@ -1,5 +1,6 @@
 <?php
-	$resourceID = $_GET['resourceID'];
+	$entityID = $_GET['entityID'];
+
 	if (isset($_GET['resourceNoteID'])) $resourceNoteID = $_GET['resourceNoteID']; else $resourceNoteID = '';
 		if (isset($_GET['tab'])) $tabName = $_GET['tab']; else $tabName = '';
 	$resourceNote = new ResourceNote(new NamedArguments(array('primaryKey' => $resourceNoteID)));
@@ -11,7 +12,7 @@
 ?>
 		<div id='div_noteForm'>
 		<form id='noteForm'>
-		<input type='hidden' name='editResourceID' id='editResourceID' value='<?php echo $resourceID; ?>'>
+		<input type='hidden' name='editEntityID' id='editEntityID' value='<?php echo $entityID; ?>'>
 		<input type='hidden' name='editResourceNoteID' id='editResourceNoteID' value='<?php echo $resourceNoteID; ?>'>
 		<input type='hidden' name='tab' id='tab' value='<?php echo $tabName; ?>'>
 

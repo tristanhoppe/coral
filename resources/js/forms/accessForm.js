@@ -58,7 +58,7 @@ $(document).ready(function(){
 		}
 	 });
 
-
+	
     	$('.changeInput').addClass("idleField");
 
 	$('.changeInput').live('focus', function() {
@@ -120,14 +120,14 @@ function submitAccess(){
 	$(".check_authorizedSite:checked").each(function(id) {
 	      authorizedSitesList += $(this).val() + ":::";
 	});
-
-
+	
+	
 	$('#submitAccessChanges').attr("disabled", "disabled");
 	  $.ajax({
 		 type:       "POST",
 		 url:        "ajax_processing.php?action=submitAccess",
 		 cache:      false,
-		 data:       { resourceID: $("#editResourceID").val(), authenticationTypeID: $("#authenticationTypeID").val(), accessMethodID: $("#accessMethodID").val(), coverageText: $("#coverageText").val(), authenticationUserName: $("#authenticationUserName").val(), authenticationPassword: $("#authenticationPassword").val(), storageLocationID: $("#storageLocationID").val(), userLimitID: $("#userLimitID").val(), administeringSites: administeringSitesList, authorizedSites: authorizedSitesList },
+		 data:       { resourceID: $("#editResourceID").val(), resourceAcquisitionID: $("#editResourceAcquisitionID").val(), authenticationTypeID: $("#authenticationTypeID").val(), accessMethodID: $("#accessMethodID").val(), coverageText: $("#coverageText").val(), authenticationUserName: $("#authenticationUserName").val(), authenticationPassword: $("#authenticationPassword").val(), storageLocationID: $("#storageLocationID").val(), userLimitID: $("#userLimitID").val(), administeringSites: administeringSitesList, authorizedSites: authorizedSitesList },
 		 success:    function(html) {
 			if (html){
 				$("#span_errors").html(html);

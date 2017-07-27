@@ -3,7 +3,9 @@ include_once '../directory.php';
 include_once '../user.php';
 
 $resourceID = $_GET['resourceID'];
+$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
 $resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
 $catalogingStatus = new CatalogingStatus();
 $catalogingType = new CatalogingType();
@@ -11,6 +13,7 @@ $catalogingType = new CatalogingType();
 <div id='div_catalogingForm'>
 <form id='catalogingForm' method="post" action="resources/cataloging_update.php">
 <input type='hidden' name='resourceID' id='resourceID' value='<?php echo $resourceID; ?>'>
+<input type='hidden' name='resourceAcquisitionID' id='resourceAcquisitionID' value='<?php echo $resourceAcquisitionID; ?>'>
 
 <div class='formTitle' style='width:715px; margin-bottom:5px;'><span class='headerText'><?php echo _("Edit Cataloging");?></span></div>
 
@@ -34,30 +37,30 @@ $catalogingType = new CatalogingType();
 		<table>
 		<tr>
 		<td style='vertical-align:top;text-align:left;font-weight:bold;'><?php echo Html::label_tag('recordSetIdentifier', _('Identifier')); ?></td>
-		<td><?php echo Html::text_field('recordSetIdentifier', $resource, array('width' => '240px')) ?>
+		<td><?php echo Html::text_field('recordSetIdentifier', $resourceAcquisition, array('width' => '240px')) ?>
 		</td>
 		</tr>
 
 		<tr>
 		<td style='vertical-align:top;text-align:left;font-weight:bold;'><?php echo Html::label_tag('bibSourceURL', _('Source URL')); ?></td>
-		<td><?php echo Html::text_field('bibSourceURL', $resource, array('width' => '240px')) ?>
+		<td><?php echo Html::text_field('bibSourceURL', $resourceAcquisition, array('width' => '240px')) ?>
 		</td>
 		</tr>
-
+		
 		<tr>
 		<td style='vertical-align:top;text-align:left;font-weight:bold;'><?php echo Html::label_tag('catalogingTypeID', _('Cataloging Type')); ?></td>
 		<td>
-		  <?php echo Html::select_field('catalogingTypeID', $resource, $catalogingType->all(), array('width' => '150px')); ?>
+		  <?php echo Html::select_field('catalogingTypeID', $resourceAcquisition, $catalogingType->all(), array('width' => '150px')); ?>
 		</td>
 		</tr>
-
+		
 		<tr>
 		<td style='vertical-align:top;text-align:left;font-weight:bold;'><?php echo Html::label_tag('catalogingStatusID', _('Cataloging Status')); ?></td>
 		<td>
-		  <?php echo Html::select_field('catalogingStatusID', $resource, $catalogingStatus->all(), array('width' => '150px')); ?>
+		  <?php echo Html::select_field('catalogingStatusID', $resourceAcquisition, $catalogingStatus->all(), array('width' => '150px')); ?>
 		</td>
 		</tr>
-
+		
 		</table>
 
 	</td>
@@ -67,20 +70,20 @@ $catalogingType = new CatalogingType();
       <tr>
   		<td style='vertical-align:top;text-align:left;font-weight:bold;'><?php echo Html::label_tag('numberRecordsAvailable', _('# Records Available')); ?></td>
   		<td>
-  		  <?php echo Html::text_field('numberRecordsAvailable', $resource, array('width' => '60px')) ?>
+  		  <?php echo Html::text_field('numberRecordsAvailable', $resourceAcquisition, array('width' => '60px')) ?>
   		</td>
   		</tr>
 
   		<tr>
   		<td style='vertical-align:top;text-align:left;font-weight:bold;'><?php echo Html::label_tag('numberRecordsLoaded', _('# Records Loaded')); ?></td>
   		<td>
-  		  <?php echo Html::text_field('numberRecordsLoaded', $resource, array('width' => '60px')) ?>
+  		  <?php echo Html::text_field('numberRecordsLoaded', $resourceAcquisition, array('width' => '60px')) ?>
   		</td>
   		</tr>
-
+		
 		<tr>
 		<td style='vertical-align:top;text-align:left;font-weight:bold;'><?php echo Html::label_tag('hasOclcHoldings', _('OCLC Holdings')); ?></td>
-		<td><input type='checkbox' value="1" id='hasOclcHoldings' name='hasOclcHoldings' <?php if ($resource->hasOclcHoldings) { echo 'checked'; } ?> /></td>
+		<td><input type='checkbox' value="1" id='hasOclcHoldings' name='hasOclcHoldings' <?php if ($resourceAcquisition->hasOclcHoldings) { echo 'checked'; } ?> /></td>
 		</tr>
 		</table>
 	</td>

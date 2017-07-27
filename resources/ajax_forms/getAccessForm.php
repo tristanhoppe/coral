@@ -1,6 +1,8 @@
 <?php
 	$resourceID = $_GET['resourceID'];
+	$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
 	$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+	$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
 	//get all authentication types for output in drop down
 	$authenticationTypeArray = array();
@@ -33,7 +35,7 @@
 	$sanitizedInstance = array();
 	$instance = new AdministeringSite();
 	$resourceAdministeringSiteArray = array();
-	foreach ($resource->getResourceAdministeringSites() as $instance) {
+	foreach ($resourceAcquisition->getAdministeringSites() as $instance) {
 		$resourceAdministeringSiteArray[] = $instance->administeringSiteID;
 	}
 
@@ -48,13 +50,14 @@
 	$sanitizedInstance = array();
 	$instance = new AuthorizedSite();
 	$resourceAuthorizedSiteArray = array();
-	foreach ($resource->getResourceAuthorizedSites() as $instance) {
+	foreach ($resourceAcquisition->getAuthorizedSites() as $instance) {
 		$resourceAuthorizedSiteArray[] = $instance->authorizedSiteID;
 	}
 ?>
 		<div id='div_accessForm'>
 		<form id='accessForm'>
 		<input type='hidden' name='editResourceID' id='editResourceID' value='<?php echo $resourceID; ?>'>
+		<input type='hidden' name='editResourceAcquisitionID' id='editResourceAcquisitionID' value='<?php echo $resourceAcquisitionID; ?>'>
 
 		<div class='formTitle' style='width:617px; margin-bottom:5px;'><span class='headerText'><?php echo _("Edit Access");?></span></div>
 
@@ -78,7 +81,7 @@
 						<option value=''></option>
 						<?php
 						foreach ($authenticationTypeArray as $authenticationType){
-							if (!(trim(strval($authenticationType['authenticationTypeID'])) != trim(strval($resource->authenticationTypeID)))){
+							if (!(trim(strval($authenticationType['authenticationTypeID'])) != trim(strval($resourceAcquisition->authenticationTypeID)))){
 								echo "<option value='" . $authenticationType['authenticationTypeID'] . "' selected>" . $authenticationType['shortName'] . "</option>\n";
 							}else{
 								echo "<option value='" . $authenticationType['authenticationTypeID'] . "'>" . $authenticationType['shortName'] . "</option>\n";
@@ -88,7 +91,7 @@
 						</select>
 					</td>
 					<td style='vertical-align:top;text-align:left;font-weight:bold;white-space: nowrap;'><label for='authenticationUserName'><?php echo _("Username:");?></label></td>
-					<td><input type='text' id='authenticationUserName' name='authenticationUserName' value = '<?php echo $resource->authenticationUserName; ?>' style='width:95px;' class='changeInput'  /></td>
+					<td><input type='text' id='authenticationUserName' name='authenticationUserName' value = '<?php echo $resourceAcquisition->authenticationUserName; ?>' style='width:95px;' class='changeInput'  /></td>
 				</tr>
 				<tr>
 					<td style='vertical-align:top;text-align:left;font-weight:bold;white-space: nowrap;'><label for='accessMethodID'><?php echo _("Access Method:");?></label></td>
@@ -97,7 +100,7 @@
 						<option value=''></option>
 						<?php
 						foreach ($accessMethodArray as $accessMethod){
-							if (!(trim(strval($accessMethod['accessMethodID'])) != trim(strval($resource->accessMethodID)))){
+							if (!(trim(strval($accessMethod['accessMethodID'])) != trim(strval($resourceAcquisition->accessMethodID)))){
 								echo "<option value='" . $accessMethod['accessMethodID'] . "' selected>" . $accessMethod['shortName'] . "</option>\n";
 							}else{
 								echo "<option value='" . $accessMethod['accessMethodID'] . "'>" . $accessMethod['shortName'] . "</option>\n";
@@ -107,7 +110,7 @@
 						</select>
 					</td>
 					<td style='vertical-align:top;text-align:left;font-weight:bold;white-space: nowrap;'><label for='authenticationPassword'><?php echo _("Password:");?></label></td>
-					<td><input type='text' id='authenticationPassword' name='authenticationPassword' value = '<?php echo $resource->authenticationPassword; ?>' style='width:95px;' class='changeInput'  /></td>
+					<td><input type='text' id='authenticationPassword' name='authenticationPassword' value = '<?php echo $resourceAcquisition->authenticationPassword; ?>' style='width:95px;' class='changeInput'  /></td>
 				</tr>
 				<tr>
 					<td style='vertical-align:top;text-align:left;font-weight:bold;white-space: nowrap;'><label for='storageLocationID'><?php echo _("Storage Location:");?></label></td>
@@ -116,7 +119,7 @@
 						<option value=''></option>
 						<?php
 						foreach ($storageLocationArray as $storageLocation){
-							if (!(trim(strval($storageLocation['storageLocationID'])) != trim(strval($resource->storageLocationID)))){
+							if (!(trim(strval($storageLocation['storageLocationID'])) != trim(strval($resourceAcquisition->storageLocationID)))){
 								echo "<option value='" . $storageLocation['storageLocationID'] . "' selected>" . $storageLocation['shortName'] . "</option>\n";
 							}else{
 								echo "<option value='" . $storageLocation['storageLocationID'] . "'>" . $storageLocation['shortName'] . "</option>\n";
@@ -131,7 +134,7 @@
 						<option value=''></option>
 						<?php
 						foreach ($userLimitArray as $userLimit){
-							if (!(trim(strval($userLimit['userLimitID'])) != trim(strval($resource->userLimitID)))){
+							if (!(trim(strval($userLimit['userLimitID'])) != trim(strval($resourceAcquisition->userLimitID)))){
 								echo "<option value='" . $userLimit['userLimitID'] . "' selected>" . $userLimit['shortName'] . "</option>\n";
 							}else{
 								echo "<option value='" . $userLimit['userLimitID'] . "'>" . $userLimit['shortName'] . "</option>\n";
@@ -144,7 +147,7 @@
 				<tr>
 					<td style='vertical-align:top;text-align:left;font-weight:bold;white-space: nowrap;'><label for='coverageText'><?php echo _("Coverage:");?></label></td>
 					<td colspan='3'>
-						<input type='text' id='coverageText' name='coverageText' value = "<?php echo $resource->coverageText; ?>" style='width:405px;' class='changeInput'  />
+						<input type='text' id='coverageText' name='coverageText' value = "<?php echo $resourceAcquisition->coverageText; ?>" style='width:405px;' class='changeInput'  />
 					</td>
 				</tr>
 				</table>

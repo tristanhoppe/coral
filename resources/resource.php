@@ -20,8 +20,11 @@
 include_once 'directory.php';
 
 $resourceID = $_GET['resourceID'];
+$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
 $resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
 $status = new Status(new NamedArguments(array('primaryKey' => $resource->statusID)));
+$resourceAcquisitions = $resource->getResourceAcquisitions();
+
 
 //used to get default email address for feedback link in the right side panel
 $config = new Configuration();
@@ -35,7 +38,7 @@ if ((isset($_GET['ref'])) && ($_GET['ref'] == 'new')){
 }
 
 //set this to turn off displaying the title header in header.php
-$pageTitle=$resource->titleText;;
+$pageTitle=$resource->titleText;
 include 'templates/header.php';
 
 
@@ -49,6 +52,22 @@ if ($resource->titleText){
 
 		<div style='vertical-align:top; width:100%; height:35px; margin-left:5px;padding:0;'>
 			<span class="headerText" id='span_resourceName' style='float:left;vertical-align:text-top;'><?php echo $resource->titleText; ?>&nbsp;</span>
+            <?php
+                if ($resource->countResourceAcquisitions() > 1) {
+            ?>
+            <label for="resourceAcquisitionSelect">Order: </label>
+            <select id="resourceAcquisitionSelect">
+            <?php
+                    foreach ($resourceAcquisitions as $resourceAcquisition) {
+                        echo "<option value=\"$resourceAcquisition->resourceAcquisitionID\"";
+                        if ($resourceAcquisitionID == $resourceAcquisition->resourceAcquisitionID) echo " selected=\"selected\"";
+                        echo ">$resourceAcquisition->subscriptionStartDate - $resourceAcquisition->subscriptionEndDate</option>";
+                    }
+                    echo "</select>";
+                } else {
+                    echo '<input type="hidden" id="resourceAcquisitionSelect" value="'.$resourceAcquisitions[0]->resourceAcquisitionID .'" />';
+                }
+            ?>
 			<div id='div_new' style='float:left;vertical-align:bottom;font-weight:115%;margin-top:3px;' class='darkRedText'><?php if ($_GET['ref'] == 'new'){ ?>&nbsp;&nbsp;<img src='images/red_checkmark.gif' />
 				<span class='boldText'><?php echo _("Success!");?></span>&nbsp;&nbsp;<?php echo _("New resource added"); } ?>
 			</div>
@@ -69,6 +88,26 @@ if ($resource->titleText){
 				<tr>
 					<td class="sidemenu">
 						<?php echo resource_sidemenu(watchString('product')); ?>
+					</td>
+					<td class='mainContent'>
+
+						<div class='div_mainContent'>
+						</div>
+					</td>
+				</tr>
+			</table>
+
+		</div>
+
+        <?php if (isset($_GET['showTab']) && $_GET['showTab'] == 'orders'){ ?>
+		<div style="width: 597px;" id='div_orders' class="resource_tab_content">
+		<?php } else { ?>
+		<div style="display:none;width: 597px;" id='div_orders' class="resource_tab_content">
+		<?php } ?>
+			<table cellpadding="0" cellspacing="0" style="width: 100%;">
+				<tr>
+					<td class="sidemenu">
+						<?php echo resource_sidemenu(watchString('orders')); ?>
 					</td>
 					<td class='mainContent'>
 

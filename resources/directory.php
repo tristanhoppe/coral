@@ -143,6 +143,7 @@ function resource_sidemenu($selected_link = '') {
   global $user;
   $links = array(
     'product',
+    'orders',
     'acquisitions',
     'access',
     'cataloging',

@@ -1,14 +1,16 @@
 <?php
 	$config = new Configuration();
 	$resourceID = $_GET['resourceID'];
+	$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
 	$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+	$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
 
 		//get license statuses
 		$sanitizedInstance = array();
 		$instance = new ResourceLicenseStatus();
 		$resourceLicenseStatusArray = array();
-		foreach ($resource->getResourceLicenseStatuses() as $instance) {
+		foreach ($resourceAcquisition->getResourceLicenseStatuses() as $instance) {
 				foreach (array_keys($instance->attributeNames) as $attributeName) {
 					$sanitizedInstance[$attributeName] = $instance->$attributeName;
 				}
@@ -31,10 +33,10 @@
 
 		}
 
-		$currentLicenseStatusID = $resource->getCurrentResourceLicenseStatus();
+		$currentLicenseStatusID = $resourceAcquisition->getCurrentResourceLicenseStatus();
 
 		//get licenses (already returned in array)
-		$licenseArray = $resource->getLicenseArray();
+		$licenseArray = $resourceAcquisition->getLicenseArray();
 
 
 
@@ -45,7 +47,7 @@
 ?>
 		<div id='div_licenseForm'>
 		<form id='licenseForm'>
-		<input type='hidden' name='editResourceID' id='editResourceID' value='<?php echo $resourceID; ?>'>
+		<input type='hidden' name='editResourceAcquisitionID' id='editResourceAcquisitionID' value='<?php echo $resourceAcquisitionID; ?>'>
 
 		<div class='formTitle' style='width:360px; margin-bottom:5px;'><span class='headerText'><?php echo _("Edit Licenses");?></span></div>
 

@@ -1,12 +1,13 @@
 <?php
-		$resourceID = $_POST['resourceID'];
-		$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+		$resourceAcquisitionID = $_POST['resourceAcquisitionID'];
+		$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
+
 
 		try {
-			$resource->save();
+			$resourceAcquisition->save();
 
 			//first remove all payment records, then we'll add them back
-			$resource->removeResourcePayments();
+			$resourceAcquisition->removeResourcePayments();
 
 			$yearArray          = array();  $yearArray          = explode(':::',$_POST['years']);
 			$subStartArray      = array();  $subStartArray      = explode(':::',$_POST['subStarts']);
@@ -24,7 +25,7 @@
 			foreach ($orderTypeArray as $key => $value){
 				if (($value) && ($paymentAmountArray[$key] || $yearArray[$key] || $fundIDArray[$key] || $costNoteArray[$key])){
 					$resourcePayment = new ResourcePayment();
-					$resourcePayment->resourceID    = $resourceID;
+					$resourcePayment->resourceAcquisitionID    = $resourceAcquisitionID;
 					$resourcePayment->year          = $yearArray[$key];
 					$start = $subStartArray[$key] ? date("Y-m-d", strtotime($subStartArray[$key])) : null;
 					$end   = $subEndArray[$key]   ? date("Y-m-d", strtotime($subEndArray[$key]))   : null;

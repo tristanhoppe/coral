@@ -1,17 +1,17 @@
 <?php
-		if ($_GET['resourceID']){
-			$resourceID = $_GET['resourceID'];
+		if ($_GET['resourceAcquisitionID']){
+			$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
             $workflowID = $_GET['workflow'];
-			$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+			$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
 			//log who set off the restart
-			$resource->workflowRestartLoginID = $loginID;
-			$resource->workflowRestartDate = date( 'Y-m-d' );
+			$resourceAcquisition->workflowRestartLoginID = $loginID;
+			$resourceAcquisition->workflowRestartDate = date( 'Y-m-d' );
 
 			try {
-				$resource->save();
-                $resource->isCurrentWorkflowComplete() ? $resource->archiveWorkflow() : $resource->deleteWorkflow();
-                $resource->enterNewWorkflow($workflowID);
+				$resourceAcquisition->save();
+                $resourceAcquisition->isCurrentWorkflowComplete() ? $resourceAcquisition->archiveWorkflow() : $resourceAcquisition->deleteWorkflow();
+                $resourceAcquisition->enterNewWorkflow($workflowID);
 			} catch (Exception $e) {
 				echo $e->getMessage();
 			}

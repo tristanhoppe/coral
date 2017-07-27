@@ -183,7 +183,7 @@ function submitAttachment(){
 				 type:       "POST",
 				 url:        "ajax_processing.php?action=submitAttachment",
 				 cache:      false,
-				 data:       { resourceID: $("#resourceID").val(), attachmentID: $("#editAttachmentID").val(), shortName: $("#shortName").val(), uploadDocument: fileName, descriptionText: $("#descriptionText").val(), attachmentTypeID: $("#attachmentTypeID").val()  },
+				 data:       { resourceAcquisitionID: $("#editResourceAcquisitionID").val(), attachmentID: $("#editAttachmentID").val(), shortName: $("#shortName").val(), uploadDocument: fileName, descriptionText: $("#descriptionText").val(), attachmentTypeID: $("#attachmentTypeID").val()  },
 				 success:    function(html) {
 					if (html){
 						$("#span_errors").html(html);

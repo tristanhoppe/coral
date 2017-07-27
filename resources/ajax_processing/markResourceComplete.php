@@ -1,16 +1,16 @@
 <?php
-		if ($_GET['resourceID']){
-			$resourceID = $_GET['resourceID'];
-			$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+		if ($_GET['resourceAcquisitionID']){
+			$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
+			$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 			//log who set off the completion
-			$resource->workflowRestartLoginID = $loginID;
-			$resource->workflowRestartDate = date( 'Y-m-d' );
+			$resourceAcquisition->workflowRestartLoginID = $loginID;
+			$resourceAcquisition->workflowRestartDate = date( 'Y-m-d' );
 
 			try {
-				$resource->save();
+				$resourceAcquisition->save();
 
 				//updates status and sends notification
-				$resource->completeWorkflow();
+				$resourceAcquisition->completeWorkflow();
 			} catch (Exception $e) {
 				echo $e->getMessage();
 			}

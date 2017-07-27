@@ -219,7 +219,7 @@ function submitLicenseForm(){
 			 type:       "POST",
 			 url:        "ajax_processing.php?action=submitLicenseUpdate",
 			 cache:      false,
-			 data:       { resourceID: $("#editResourceID").val(), licenseStatusID: $("#licenseStatusID").val(), licenseList: licenseList  },
+			 data:       { resourceAcquisitionID: $("#editResourceAcquisitionID").val(), licenseStatusID: $("#licenseStatusID").val(), licenseList: licenseList  },
 			 success:    function(html) {
 				if (html){
 					$("#span_errors").html(html);

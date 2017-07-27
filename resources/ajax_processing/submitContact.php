@@ -11,7 +11,7 @@
 		}
 
 		$contact->lastUpdateDate = date( 'Y-m-d H:i:s' );
-		$contact->resourceID     = $_POST['resourceID'];
+		$contact->resourceAcquisitionID = $_POST['resourceAcquisitionID'] ? $_POST['resourceAcquisitionID'] : $contact->resourceAcquisitionID;
 		$contact->name           = $_POST['name'];
 		$contact->title          = $_POST['title'];
 		$contact->addressText    = $_POST['addressText'];

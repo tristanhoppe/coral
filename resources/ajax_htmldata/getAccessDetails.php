@@ -1,17 +1,19 @@
 <?php
 	$resourceID = $_GET['resourceID'];
+	$resourceAcquisitionID = $_GET['resourceAcquisitionID'];
 	$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+	$resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
-	$userLimit = new UserLimit(new NamedArguments(array('primaryKey' => $resource->userLimitID)));
-	$storageLocation = new StorageLocation(new NamedArguments(array('primaryKey' => $resource->storageLocationID)));
-	$accessMethod = new AccessMethod(new NamedArguments(array('primaryKey' => $resource->accessMethodID)));
-	$authenticationType = new AuthenticationType(new NamedArguments(array('primaryKey' => $resource->authenticationTypeID)));
+	$userLimit = new UserLimit(new NamedArguments(array('primaryKey' => $resourceAcquisition->userLimitID)));
+	$storageLocation = new StorageLocation(new NamedArguments(array('primaryKey' => $resourceAcquisition->storageLocationID)));
+	$accessMethod = new AccessMethod(new NamedArguments(array('primaryKey' => $resourceAcquisition->accessMethodID)));
+	$authenticationType = new AuthenticationType(new NamedArguments(array('primaryKey' => $resourceAcquisition->authenticationTypeID)));
 
 		//get administering sites
 		$sanitizedInstance = array();
 		$instance = new AdministeringSite();
 		$administeringSiteArray = array();
-		foreach ($resource->getResourceAdministeringSites() as $instance) {
+		foreach ($resourceAcquisition->getAdministeringSites() as $instance) {
 			$administeringSiteArray[]=$instance->shortName;
 		}
 
@@ -21,7 +23,7 @@
 		$sanitizedInstance = array();
 		$instance = new PurchaseSite();
 		$authorizedSiteArray = array();
-		foreach ($resource->getResourceAuthorizedSites() as $instance) {
+		foreach ($resourceAcquisition->getAuthorizedSites() as $instance) {
 			$authorizedSiteArray[]=$instance->shortName;
 		}
 ?>
@@ -60,10 +62,10 @@
 			<?php } ?>
 
 
-			<?php if (($resource->authenticationUserName) || ($resource->authenticationPassword)) { ?>
+			<?php if (($resourceAcquisition->authenticationUserName) || ($resourceAcquisition->authenticationPassword)) { ?>
 				<tr>
 				<td style='vertical-align:top;width:150px;'><?php echo _("Username / Password:");?></td>
-				<td style='width:310px;'><?php echo $resource->authenticationUserName . " / " . $resource->authenticationPassword; ?></td>
+				<td style='width:310px;'><?php echo $resourceAcquisition->authenticationUserName . " / " . $resourceAcquisition->authenticationPassword; ?></td>
 				</tr>
 			<?php } ?>
 
@@ -75,10 +77,10 @@
 			<?php } ?>
 
 
-			<?php if ($resource->registeredIPAddressException){ ?>
+			<?php if ($resourceAcquisition->registeredIPAddressException){ ?>
 				<tr>
 				<td style='vertical-align:top;width:150px;'><?php echo _("Registered IP Address:");?></td>
-				<td style='width:310px;'><?php echo $resource->registeredIPAddressException; ?></td>
+				<td style='width:310px;'><?php echo $resourceAcquisition->registeredIPAddressException; ?></td>
 				</tr>
 			<?php } ?>
 
@@ -90,10 +92,10 @@
 				</tr>
 			<?php } ?>
 
-			<?php if ($resource->coverageText) { ?>
+			<?php if ($resourceAcquisition->coverageText) { ?>
 				<tr>
 				<td style='vertical-align:top;width:150px;'><?php echo _("Coverage:");?></td>
-				<td style='width:310px;'><?php echo $resource->coverageText; ?></td>
+				<td style='width:310px;'><?php echo $resourceAcquisition->coverageText; ?></td>
 				</tr>
 			<?php } ?>
 
@@ -105,7 +107,7 @@
 			<?php
 			}
 
-			if ((count($administeringSiteArray) == 0) && (!$authenticationType->shortName) && (!$resource->coverageText) && (!$resource->authenticationUserName) && (!$resource->authenticationPassword) && (!$userLimit->shortName) && (!$resource->registeredIPAddressException) && (!$storageLocation->shortName) && (!$accessMethod->shortName)){
+			if ((count($administeringSiteArray) == 0) && (!$authenticationType->shortName) && (!$resourceAcquisition->coverageText) && (!$resourceAcquisition->authenticationUserName) && (!$resourceAcquisition->authenticationPassword) && (!$userLimit->shortName) && (!$resourceAcquisition->registeredIPAddressException) && (!$storageLocation->shortName) && (!$accessMethod->shortName)){
 				echo "<tr><td colspan='2'><i>"._("No access information available").".</i></td></tr>";
 			}
 
@@ -113,7 +115,7 @@
 			</table>
 
 			<?php if ($user->canEdit()){ ?>
-				<a href='ajax_forms.php?action=getAccessForm&height=394&width=640&modal=true&resourceID=<?php echo $resourceID; ?>' class='thickbox' id='editAccess'><?php echo _("edit access information");?></a>
+				<a href='ajax_forms.php?action=getAccessForm&height=394&width=640&modal=true&resourceID=<?php echo $resourceID; ?>&resourceAcquisitionID=<?php echo $resourceAcquisitionID; ?>' class='thickbox' id='editAccess'><?php echo _("edit access information");?></a>
 			<?php } ?>
 
 			<br /><br /><br />
@@ -126,7 +128,7 @@
 		//get notes for this tab
 		$sanitizedInstance = array();
 		$noteArray = array();
-		foreach ($resource->getNotes('Access') as $instance) {
+		foreach ($resourceAcquisition->getNotes('Access') as $instance) {
 			foreach (array_keys($instance->attributeNames) as $attributeName) {
 				$sanitizedInstance[$attributeName] = $instance->$attributeName;
 			}
@@ -159,7 +161,7 @@
 				<th><?php echo _("Additional Notes");?></th>
 				<th>
 				<?php if ($user->canEdit()){?>
-					<a href='ajax_forms.php?action=getNoteForm&height=233&width=410&tab=Access&resourceID=<?php echo $resourceID; ?>&resourceNoteID=&modal=true' class='thickbox'><?php echo _("add new note");?></a>
+					<a href='ajax_forms.php?action=getNoteForm&height=233&width=410&tab=Access&entityID=<?php echo $resourceAcquisitionID; ?>&resourceNoteID=&modal=true' class='thickbox'><?php echo _("add new note");?></a>
 				<?php } ?>
 				</th>
 				</tr>
@@ -167,7 +169,7 @@
 					<tr>
 					<td style='width:150px;'><?php echo $resourceNote['noteTypeName']; ?><br />
 					<?php if ($user->canEdit()){?>
-					<a href='ajax_forms.php?action=getNoteForm&height=233&width=410&tab=Access&resourceID=<?php echo $resourceID; ?>&resourceNoteID=<?php echo $resourceNote['resourceNoteID']; ?>&modal=true' class='thickbox'><img src='images/edit.gif' alt='<?php echo _("edit");?>' title='<?php echo _("edit note");?>'></a>  <a href='javascript:void(0);' class='removeNote' id='<?php echo $resourceNote['resourceNoteID']; ?>' tab='Access'><img src='images/cross.gif' alt='<?php echo _("remove note");?>' title='<?php echo _("remove note");?>'></a>
+					<a href='ajax_forms.php?action=getNoteForm&height=233&width=410&tab=Access&entityID=<?php echo $resourceAcquisitionID; ?>&resourceNoteID=<?php echo $resourceNote['resourceNoteID']; ?>&modal=true' class='thickbox'><img src='images/edit.gif' alt='<?php echo _("edit");?>' title='<?php echo _("edit note");?>'></a>  <a href='javascript:void(0);' class='removeNote' id='<?php echo $resourceNote['resourceNoteID']; ?>' tab='Access'><img src='images/cross.gif' alt='<?php echo _("remove note");?>' title='<?php echo _("remove note");?>'></a>
 					<?php } ?>
 					</td>
 					<td><?php echo nl2br($resourceNote['noteText']); ?><br /><i><?php echo format_date($resourceNote['updateDate']) . _(" by ") . $resourceNote['updateUser']; ?></i></td>
@@ -178,7 +180,7 @@
 		}else{
 			if ($user->canEdit()){
 			?>
-				<a href='ajax_forms.php?action=getNoteForm&height=233&width=410&tab=Access&resourceID=<?php echo $resourceID; ?>&resourceNoteID=&modal=true' class='thickbox'><?php echo _("add new note");?></a>
+				<a href='ajax_forms.php?action=getNoteForm&height=233&width=410&tab=Access&entityID=<?php echo $resourceAcquisitionID; ?>&resourceNoteID=&modal=true' class='thickbox'><?php echo _("add new note");?></a>
 			<?php
 			}
 		}

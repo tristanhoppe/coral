@@ -10,7 +10,7 @@
 			$attachment->attachmentID =  '';
 		}
 
-		$attachment->resourceID 			= $_POST['resourceID'];
+		$attachment->resourceAcquisitionID = $_POST['resourceAcquisitionID'];
 		$attachment->attachmentTypeID 		= $_POST['attachmentTypeID'];
 		$attachment->shortName				= $_POST['shortName'];
 		$attachment->descriptionText		= $_POST['descriptionText'];

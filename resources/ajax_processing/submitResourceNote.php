@@ -14,7 +14,7 @@
 		$resourceNote->updateDate			= date( 'Y-m-d H:i:s' );
 		$resourceNote->noteTypeID 			= $_POST['noteTypeID'];
 		$resourceNote->tabName 				= $_POST['tabName'];
-		$resourceNote->resourceID 			= $_POST['resourceID'];
+		$resourceNote->entityID 			= $_POST['entityID'];
 		$resourceNote->noteText 			= $_POST['noteText'];
 
 		try {

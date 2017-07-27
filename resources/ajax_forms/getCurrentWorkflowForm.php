@@ -1,21 +1,21 @@
 <?php
-if (!isset($_GET['resourceID'])){
-    echo "<div><p>You must supply a valid resource ID.</p></div>";
+if (!isset($_GET['resourceAcquisitionID'])){
+    echo "<div><p>You must supply a valid order ID.</p></div>";
 }else{
-    $resourceID = $_GET['resourceID'];
-    $resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+    $resourceAcquisitionID = $_GET['resourceAcquisitionID'];
+    $resourceAcquisition = new ResourceAcquisition(new NamedArguments(array('primaryKey' => $resourceAcquisitionID)));
 
     $userGroupObj = new UserGroup();
     $userGroupArray = $userGroupObj->allAsArray();
 
-    $resourceSteps = $resource->getCurrentWorkflowResourceSteps();
-    $parentSteps = $resource->getCurrentWorkflowResourceSteps();
+    $resourceSteps = $resourceAcquisition->getCurrentWorkflowResourceSteps();
+    $parentSteps = $resourceAcquisition->getCurrentWorkflowResourceSteps();
 
     //make form
     ?>
     <div id='div_resourceStepForm'>
         <form id='resourceStepForm'>
-            <input type='hidden' name='editRID' id='editRID' value='<?php echo $resourceID; ?>'>
+            <input type='hidden' name='editRAID' id='editRAID' value='<?php echo $resourceAcquisitionID; ?>'>
 
             <div class='formTitle' style='width:705px; margin-bottom:5px;position:relative;'><span class='headerText'>Edit Workflow</span></div>
 
