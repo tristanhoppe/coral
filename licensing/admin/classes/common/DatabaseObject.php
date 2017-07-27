@@ -64,6 +64,15 @@ class DatabaseObject extends DynamicObject {
 	protected function defineRelationships() {}
 	protected function overridePrimaryKeyName() {}
 
+    protected function asArray() {
+        $aarray = array();
+		foreach (array_keys($this->attributeNames) as $attributeName) {
+			if ($this->$attributeName != null) {
+				$aarray[$attributeName] = $this->$attributeName;
+			}
+		}
+        return $aarray;
+    }
 
 	protected function defineAttributes() {
 		// Figure out attributes from existing database

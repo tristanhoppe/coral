@@ -19,6 +19,7 @@ include_once '../admin/classes/domain/ResourceNote.php';
 include_once '../admin/classes/domain/ResourcePayment.php';
 include_once '../admin/classes/domain/AdministeringSite.php';
 include_once '../admin/classes/domain/ResourceAdministeringSiteLink.php';
+include_once '../admin/classes/domain/ResourceRelationship.php';
 include_once '../admin/classes/domain/Status.php';
 include_once '../admin/classes/domain/User.php';
 include_once '../admin/classes/domain/Workflow.php';
@@ -26,6 +27,17 @@ include_once '../admin/classes/domain/Step.php';
 include_once '../admin/classes/domain/ResourceStep.php';
 include_once '../admin/classes/domain/UserGroup.php';
 include_once '../admin/classes/domain/Fund.php';
+include_once '../admin/classes/domain/IsbnOrIssn.php';
+include_once '../../licensing/admin/classes/domain/License.php';
+include_once '../../licensing/admin/classes/domain/Document.php';
+include_once '../../licensing/admin/classes/domain/DocumentType.php';
+include_once '../../licensing/admin/classes/domain/Expression.php';
+include_once '../../licensing/admin/classes/domain/ExpressionNote.php';
+include_once '../../licensing/admin/classes/domain/ExpressionType.php';
+include_once '../../organizations/admin/classes/domain/Organization.php';
+include_once '../../organizations/admin/classes/domain/Alias.php';
+
+
 
 if (!isAllowed()) {
     header('HTTP/1.0 403 Forbidden');
@@ -283,6 +295,61 @@ Flight::route('/getAdministeringSite/@id', function($id) {
     Flight::json($as->shortName);
 });
 
+Flight::route('GET /resources/@id', function($id) {
+    $r = new Resource(new NamedArguments(array('primaryKey' => $id)));
+	Flight::json($r->asArray());
+    
+});
+
+Flight::route('GET /resources/', function() {
+    $identifier = Flight::request()->query->identifier;
+    if ($identifier) {
+        $r = new Resource();
+        Flight::json(array_map(function($value) { return $value->asArray(); }, $r->getResourceByIsbnOrISSN($identifier)));
+    }
+});
+
+Flight::route('GET /resources/@id/titles', function($id) {
+    $r = new Resource(new NamedArguments(array('primaryKey' => $id)));
+	$childResourceArray = array();
+	$childResourceIDArray = array();
+	foreach ($r->getChildResources() as $instance) {
+	   foreach (array_keys($instance->attributeNames) as $attributeName) {
+			$sanitizedInstance[$attributeName] = $instance->$attributeName;
+		}
+		$sanitizedInstance[$instance->primaryKeyName] = $instance->primaryKey;
+		array_push($childResourceIDArray, $sanitizedInstance);
+	}
+
+	foreach ($childResourceIDArray as $childResource){
+		$childResourceObj = new Resource(new NamedArguments(array('primaryKey' => $childResource['resourceID'])));
+		array_push($childResourceArray, $childResourceObj->asArray());
+	}
+    Flight::json($childResourceArray);
+});
+
+Flight::route('GET /resources/@id/licenses', function($id) {
+    $db = DBService::getInstance();
+    $r = new Resource(new NamedArguments(array('primaryKey' => $id)));
+	$licensesArray = array();
+    $rla = $r->getLicenseArray();
+    $db->changeDb('licensingDatabaseName');
+	foreach($rla as $license) {
+		$l = new License(new NamedArguments(array('primaryKey' => $license['licenseID'])));
+		array_push($licensesArray, $l->asArray());
+	}
+    $db->changeDb();
+	Flight::json($licensesArray);
+});
+
+
+Flight::route('GET /organizations/@id', function($id) {
+    $db = DBService::getInstance();
+    $db->changeDb('organizationsDatabaseName');
+    $organization = new Organization(new NamedArguments(array('primaryKey' => $id))); 
+    Flight::json($organization->asArray());
+    $db->changeDb();
+});
 
 Flight::start();
 

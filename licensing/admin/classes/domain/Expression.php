@@ -23,7 +23,17 @@ class Expression extends DatabaseObject {
 
 	protected function overridePrimaryKeyName() {}
 
-
+    public function asArray() {
+      $aarray = array();
+		foreach (array_keys($this->attributeNames) as $attributeName) {
+			if ($this->$attributeName != null) {
+				$aarray[$attributeName] = $this->$attributeName;
+			}
+		}
+        $expressionType = new ExpressionType(new NamedArguments(array("primaryKey" => $this->expressionTypeID)));
+        $aarray['expressionType'] = $expressionType->shortName;
+        return $aarray;
+    }
 
 
 

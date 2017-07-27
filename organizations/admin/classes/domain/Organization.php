@@ -24,6 +24,23 @@ class Organization extends DatabaseObject {
 
 	protected function overridePrimaryKeyName() {}
 
+    public function asArray() {
+		$rarray = array();
+		foreach (array_keys($this->attributeNames) as $attributeName) {
+			if ($this->$attributeName != null) {
+				$rarray[$attributeName] = $this->$attributeName;
+			}
+		}
+
+		$aliases = $this->getAliases();
+		$rarray['aliases'] = array();
+		foreach ($aliases as $alias) {
+            array_push($rarray['aliases'], $alias->name);
+		}
+
+		return $rarray;
+    }
+
 
 
 	//returns array of parent organization objects

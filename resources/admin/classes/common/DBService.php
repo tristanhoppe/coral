@@ -22,6 +22,19 @@ class DBService extends Object {
 	protected $db;
 	protected $config;
 	protected $error;
+	private static $_instance; //The single instance
+
+
+/*
+	Get an instance of the Database
+	@return Instance
+	*/
+	public static function getInstance() {
+		if(!self::$_instance) { // If no instance then make one
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
 
 	protected function init(NamedArguments $arguments) {
 		parent::init($arguments);
@@ -52,6 +65,11 @@ class DBService extends Object {
         $this->db->select_db($databaseName);
 		$this->checkForError();
 	}
+
+    public function changeDb($name = null) {
+        $dbName =  ($name == null) ? $this->config->database->name : $this->config->settings->$name;
+        $this->db->select_db($dbName);
+    }
 
 	protected function disconnect() {
 		//mysqli_close($this->db);

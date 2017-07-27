@@ -23,6 +23,33 @@ class License extends DatabaseObject {
 
 	protected function overridePrimaryKeyName() {}
 
+    public function asArray() {
+		$larray = array();
+		foreach (array_keys($this->attributeNames) as $attributeName) {
+			if ($this->$attributeName != null) {
+				$larray[$attributeName] = $this->$attributeName;
+			}
+		}
+        $doccount = 0;
+		foreach ($this->getDocuments() as $document) {
+            $larray['documents'][$doccount]['content'] = $document->asArray();;
+            $exprcount = 0;
+			foreach ($document->getExpressions() as $expression) {
+                $expressionType = new ExpressionType(new NamedArguments(array('primaryKey' => $expression->expressionTypeID)));
+                if ($expressionType->noteType == "Display") {
+                    $larray['documents'][$doccount]['expressions'][$exprcount]['content'] = $expression->asArray();
+                    $notescount = 0;
+                    foreach ($expression->getExpressionNotes() as $expressionNote) {
+                        $larray['documents'][$doccount]['expressions'][$exprcount]['notes'][$notescount] = $expressionNote->asArray();;
+                        $notescount++;
+                    }
+                    $exprcount++;
+                }
+            }
+            $doccount++; 
+        }
+		return $larray;
+    }
 
 
 	//returns array of Document objects - used by forms to get dropdowns of available documents
@@ -51,7 +78,6 @@ class License extends DatabaseObject {
 				array_push($objects, $object);
 			}
 		}
-
 		return $objects;
 	}
 

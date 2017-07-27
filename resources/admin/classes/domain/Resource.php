@@ -25,7 +25,42 @@ class Resource extends DatabaseObject {
 
 	protected function overridePrimaryKeyName() {}
 
+    public function asArray() {
+		$rarray = array();
+		foreach (array_keys($this->attributeNames) as $attributeName) {
+			if ($this->$attributeName != null) {
+				$rarray[$attributeName] = $this->$attributeName;
+			}
+		}
 
+        $status = new Status(new NamedArguments(array('primaryKey' => $this->statusID)));
+        $rarray['status'] = $status->shortName;
+
+        if ($this->resourceTypeID) {
+            $resourceType = new ResourceType(new NamedArguments(array('primaryKey' => $this->resourceTypeID)));
+            $rarray['resourceType'] = $resourceType->shortName;
+        }
+
+        if ($this->resourceFormatID) {
+            $resourceFormat = new ResourceFormat(new NamedArguments(array('primaryKey' => $this->resourceFormatID)));
+            $rarray['resourceFormat'] = $resourceFormat->shortName;
+        }
+
+        if ($this->acquisitionTypeID) {
+            $acquisitionType = new AcquisitionType(new NamedArguments(array('primaryKey' => $this->acquisitionTypeID)));
+            $rarray['acquisitionType'] = $acquisitionType->shortName;
+        }
+
+
+		$identifiers = $this->getIsbnOrIssn();
+		$rarray['isbnOrIssn'] = array();
+		foreach ($identifiers as $identifier) {
+				array_push($rarray['isbnOrIssn'], $identifier->isbnOrIssn);
+		}
+		return $rarray;
+		
+  
+    }
 
 	//returns resource objects by title
 	public function getResourceByTitle($title) {
@@ -141,7 +176,7 @@ class Resource extends DatabaseObject {
 			$object = new ResourceRelationship(new NamedArguments(array('primaryKey' => $result['resourceRelationshipID'])));
 			array_push($objects, $object);
 		}else{
-			$db = new DBService;
+			$db = DBService::getInstance();
 			foreach ($result as $row) {
 				$object = new ResourceRelationship(new NamedArguments(array('primaryKey' => $row['resourceRelationshipID'],'db'=>$db)));
 				array_push($objects, $object);

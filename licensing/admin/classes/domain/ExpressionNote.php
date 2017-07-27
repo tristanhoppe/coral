@@ -23,6 +23,17 @@ class ExpressionNote extends DatabaseObject {
 
 	protected function overridePrimaryKeyName() {}
 
+    public function asArray() {
+      $aarray = array();
+		foreach (array_keys($this->attributeNames) as $attributeName) {
+			if ($this->$attributeName != null) {
+				$aarray[$attributeName] = $this->$attributeName;
+			}
+		}
+        return $aarray;
+ //      return parent::asArray();
+    }
+
 
 
 	//reorders expression note based on direction the user clicked
