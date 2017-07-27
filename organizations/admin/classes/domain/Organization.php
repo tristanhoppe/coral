@@ -97,8 +97,22 @@ class Organization extends DatabaseObject {
 		return $objects;
 	}
 
+    public function hasILSVendorRole() {
+        $config = new Configuration();
+        $organizationRoles = $this->getOrganizationRoles();
+        $roleMatch = false;
+        foreach ($organizationRoles as $organizationRole) {
+           if ($organizationRole->shortName == $config->ils->ilsVendorRole) {
+                $roleMatch = true;
+            }
 
+        }
+        return $roleMatch;;
+    }
 
+    public function isLinkedToILS() {
+        return $this->ilsID != null && $this->hasILSVendorRole();
+    }
 
 	//removes organization hierarchy records
 	public function removeOrganizationHierarchy(){

@@ -70,9 +70,15 @@ switch ($_GET['action']) {
 
 		<tr>
 		<td style='vertical-align:top;text-align:right;padding-top:10px;'><label for='organizationName'><b><?php echo _("Name:");?></b></label></td>
-		<td style='vertical-align:top;padding-top:10px;'><input type='text' id='organizationName' name='organizationName' value = "<?php echo htmlentities($organization->name); ?>" style='width:220px;' /><span id='span_errors' style='color:red'></span></td>
+		<td style='vertical-align:top;padding-top:10px;'><input type='text' id='organizationName' name='organizationName' value = "<?php echo htmlentities($organization->name); ?>" style='width:220px;' <?php if ($organization->isLinkedToILS()) echo "disabled='disabled'" ?> /> <span id='span_errors' style='color:red'></span></td>
 		</tr>
-
+<?php
+        if ($config->ils->ilsConnector && !$organization->isLinkedToILS()) {
+            $ilsClient = (new ILSClientSelector())->select();
+            echo ('<tr><td></td><td><a href="#" id="checkVendorInILS">' . _("Check if this vendor already exists in") . ' ' . $ilsClient->getILSName() . '</a></td></tr>');
+            echo ('<tr><td></td><td><span id="ils_span"><br /></span> <a href="#" id="retrieveVendor" style="display:none;">Retrieve its informations.</a></td></tr>');
+        }
+?>
 		<?php if (count($parentOrganizationArray) > 0){ ?>
 			<tr>
 			<td style='vertical-align:top;text-align:right;'><label for='parentOrganization'><b><?php echo _("Parent:");?></b></label></td>
@@ -99,7 +105,7 @@ switch ($_GET['action']) {
 
 		<tr>
 		<td style='vertical-align:top;text-align:right;'><label for='companyURL'><b><?php echo _("Company URL:");?></b></label></td>
-		<td><input type='text' id='companyURL' name='companyURL' value = '<?php if (!$organizationID) { echo "http://"; } else { echo $organization->companyURL; } ?>' style='width:220px' />
+		<td><input type='text' id='companyURL' name='companyURL' value = '<?php if (!$organizationID) { echo "http://"; } else { echo $organization->companyURL; } ?>' style='width:220px' <?php if ($organization->isLinkedToILS()) echo "disabled='disabled'" ?> />
 		</td>
 		</tr>
 
@@ -116,10 +122,11 @@ switch ($_GET['action']) {
 					if(($i % 2)==1){
 						echo "<tr>\n";
 					}
+                    $ilsClass = ($organizationRoleIns['shortName'] == $config->ils->ilsVendorRole) ? ' ils_role' : '';
 					if (in_array($organizationRoleIns['organizationRoleID'],$organizationRoleProfileArray)){
-						echo "<td><input class='check_roles' type='checkbox' name='" . $organizationRoleIns['organizationRoleID'] . "' id='" . $organizationRoleIns['organizationRoleID'] . "' value='" . $organizationRoleIns['organizationRoleID'] . "' checked />   " . $organizationRoleIns['shortName'] . "</td>\n";
+						echo "<td><input class='check_roles$ilsClass' type='checkbox' name='" . $organizationRoleIns['organizationRoleID'] . "' id='" . $organizationRoleIns['organizationRoleID'] . "' value='" . $organizationRoleIns['organizationRoleID'] . "' checked />   " . $organizationRoleIns['shortName'] . "</td>\n";
 					}else{
-						echo "<td><input class='check_roles' type='checkbox' name='" . $organizationRoleIns['organizationRoleID'] . "' id='" . $organizationRoleIns['organizationRoleID'] . "' value='" . $organizationRoleIns['organizationRoleID'] . "' />   " . $organizationRoleIns['shortName'] . "</td>\n";
+						echo "<td><input class='check_roles$ilsClass' type='checkbox' name='" . $organizationRoleIns['organizationRoleID'] . "' id='" . $organizationRoleIns['organizationRoleID'] . "' value='" . $organizationRoleIns['organizationRoleID'] . "' />   " . $organizationRoleIns['shortName'] . "</td>\n";
 					}
 					if(($i % 2)==0){
 						echo "</tr>\n";
@@ -137,12 +144,12 @@ switch ($_GET['action']) {
 
 		<tr>
 		<td style='vertical-align:top;text-align:right;'><label for='accountDetailText'><b><?php echo _("Account Details:");?></b></label></td>
-		<td><textarea rows='3' id='accountDetailText' name='accountDetailText' style='width:220px'><?php echo $organization->accountDetailText; ?></textarea></td>
+		<td><textarea rows='3' id='accountDetailText' name='accountDetailText' style='width:220px' <?php if ($organization->isLinkedToILS()) echo "disabled='disabled'" ?>><?php echo $organization->accountDetailText; ?></textarea></td>
 		</tr>
 
 		<tr>
 		<td style='vertical-align:top;text-align:right;'><label for='noteText'><b><?php echo _("Notes:");?></b></label></td>
-		<td><textarea rows='3' id='noteText' name='noteText' style='width:220px'><?php echo $organization->noteText; ?></textarea></td>
+		<td><textarea rows='3' id='noteText' name='noteText' style='width:220px' <?php if ($organization->isLinkedToILS()) echo "disabled='disabled'" ?>><?php echo $organization->noteText; ?></textarea></td>
 		</tr>
 
 

@@ -21,6 +21,7 @@
 include_once 'directory.php';
 include_once 'user.php';
 
+$config = new Configuration();
 
 switch ($_GET['action']) {
 
@@ -88,6 +89,32 @@ switch ($_GET['action']) {
 
 			}
 
+            if ($organization->hasILSVendorRole()) {
+                $ilsClient = (new ILSClientSelector())->select();
+                // Create vendor in ILS
+                if ($organization->ilsID == null) {
+                    $ilsID = $ilsClient->addVendor(array(
+                                                "name" => $organization->name, 
+                                                "companyURL" => $organization->companyURL,
+                                                "noteText" => $organization->noteText,
+                                                "accountDetailText" => $organization->accountDetailText,
+                                                "coralID" => (int) $organization->organizationID,
+                                                )
+                                            );
+                    if ($ilsID) {
+                        $organization->ilsID = $ilsID;
+                    }
+
+                } else {
+                    // Retrieve organization data from ILS
+                    $ilsVendor = $ilsClient->getVendor($organization->ilsID);
+                    $organization->name = $ilsVendor['name'];
+                    $organization->companyURL = $ilsVendor['companyURL'];
+                    $organization->noteText = $ilsVendor['noteText'];
+                    $organization->accountDetailText = $ilsVendor['accountDetailText'];
+                }
+                $organization->save();
+            } 
 
 		} catch (Exception $e) {
 			echo $e->getMessage();
@@ -514,31 +541,60 @@ switch ($_GET['action']) {
 		break;
 
 
+    case 'getILSVendors':
+        if ($config->ils->ilsConnector) {
+            $ilsClient = (new ILSClientSelector())->select();
+            $vendors = $ilsClient->getVendorByName($_GET['q']);
+            foreach ($vendors as $vendor) {
+                $av = (array) $vendor;
+                print $av['name'] . "\n";
+            }
+        }
+
+        break;
+
+    case 'getILSVendorInfos':
+        if ($config->ils->ilsConnector) {
+            $ilsClient = (new ILSClientSelector())->select();
+            $vendor = $ilsClient->getVendorByName($_GET['name']);
+            print json_encode($vendor[0]);
+        }
+
+        break;
+
+    case 'getExistingOrganization':
+        $name = $_GET['name'];
+        if (isset($_GET['organizationID'])) $organizationID = $_GET['organizationID']; else $organizationID = '';
 
 
-	case 'getExistingOrganizationName':
-		$name = $_GET['name'];
-		if (isset($_GET['organizationID'])) $organizationID = $_GET['organizationID']; else $organizationID = '';
+        $organization = new Organization();
+        $orgArray = array();
 
+        $exists = 0;
 
-		$organization = new Organization();
-		$orgArray = array();
+        foreach ($organization->allAsArray() as $orgArray) {
+            if ((strtoupper($orgArray['name']) == strtoupper($name)) && ($orgArray['organizationID'] != $organizationID)) {
+                $exists = $orgArray['organizationID']; break;
+            }
+        }
+        echo $exists;
+        break;
 
-		$exists = 0;
+    case 'getExistingVendor':
+        $name = $_GET['name'];
+        $exists = -1;
+        if ($config->ils->ilsConnector) {
+            $ilsClient = (new ILSClientSelector())->select();
+            if ($name && $ilsClient->vendorExists($name)) {
+                $exists = 1;
+            } else {
+                $exists = 0;
+            }
+        }
+        echo $exists;
+        break;
 
-		foreach ($organization->allAsArray() as $orgArray) {
-			if ((strtoupper($orgArray['name']) == strtoupper($name)) && ($orgArray['organizationID'] != $organizationID)) {
-				$exists = $orgArray['organizationID']; break;
-			}
-		}
-
-		echo $exists;
-
-		break;
-
-
-
-	default:
+    default:
        echo _("Action ") . $action . _(" not set up!");
        break;
 

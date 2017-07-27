@@ -15,30 +15,71 @@
 **************************************************************************************************************************
 */
 
- $(function(){
+$(function(){
 
-	//check this name to make sure it isn't already being used
-	$("#organizationName").keyup(function() {
-		  $.ajax({
-			 type:       "GET",
-			 url:        "ajax_processing.php",
-			 cache:      false,
-			 async:	     true,
-			 data:       "action=getExistingOrganizationName&name=" + $("#organizationName").val() + "&organizationID=" + $("#editOrganizationID").val(),
-			 success:    function(exists) {
-				if (exists == 0){
-					$("#span_errors").html("");
-					$("#submitOrganizationChanges").removeAttr("disabled");
-				}else{
-				  $("#span_errors").html("<br />"+_("This organization already exists!"));
-				  $("#submitOrganizationChanges").attr("disabled","disabled");
+    $("#retrieveVendor").click(function() {
+        $.ajax({
+             type:       "GET",
+             url:        "ajax_processing.php",
+             cache:      false,
+             async:      true,
+             data:       "action=getILSVendorInfos&name=" + $("#organizationName").val(),
+             success:    function(vendorString) {
+                vendor = $.parseJSON(vendorString);
+                if (vendor == null) return false;
+                $("#accountDetailText").text(vendor['accountnumber']);
+                $('#accountDetailText').attr("disabled", "disabled");
+                $("#noteText").text(vendor['notes']);
+                $('#noteText').attr("disabled", "disabled");
+                $("#companyURL").val(vendor['url']);
+                $('#companyURL').attr("disabled", "disabled");
+                $('#organizationName').attr("disabled", "disabled");
+                $('.ils_role').attr('checked', true);
+            }
+         });
+    });
 
-				}
-			 }
-		  });
+    //check this name to make sure it isn't already being used
 
+    $("#organizationName").keyup(function() {
+          $.ajax({
+             type:       "GET",
+             url:        "ajax_processing.php",
+             cache:      false,
+             async:      true,
+             data:       "action=getExistingOrganization&name=" + $("#organizationName").val() + "&organizationID=" + $("#editOrganizationID").val(),
+             success:    function(exists) {
+                if (exists == 0){
+                    $("#span_errors").html("");
+                    $("#submitOrganizationChanges").removeAttr("disabled");
+                }else{
+                    $("#span_errors").html("<br />"+_("This organization already exists!"));
+                    $("#submitOrganizationChanges").attr("disabled","disabled");
+                }
+             }
+          });
+    });
 
-    	});
+    $("#checkVendorInILS").click(function() {
+           $.ajax({
+             type:       "GET",
+             url:        "ajax_processing.php",
+             cache:      false,
+             async:      true,
+             data:       "action=getExistingVendor&name=" + $("#organizationName").val() + "&organizationID=" + $("#editOrganizationID").val(),
+             success:    function(exists) {
+                if (exists == 0){
+                    $("#ils_span").html(_("This vendor does not exist in the ILS."));
+                    $("#retrieveVendor").hide();
+                    $("#submitOrganizationChanges").removeAttr("disabled");
+                }else{
+                    //$("#ils_span").html(_("This vendor exists in the ILS.") + '<a href="javascript:retrieveVendor();" id="retrieveVendor">' + _("Retrieve its informations.") + "</a>");
+                    $("#ils_span").html(_("This vendor exists in the ILS."));
+                    $("#retrieveVendor").show();
+                }
+             }
+          });
+    });
 
 
 	 $("#openOrganizationURL").click(function () {

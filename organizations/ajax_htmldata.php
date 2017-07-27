@@ -259,6 +259,16 @@ switch ($_GET['action']) {
 		<?php
 		}
 
+        if ($organization->ilsID){ 
+            $ilsClient = (new ILSClientSelector())->select();
+        ?>
+			<tr>
+			<td style='vertical-align:top;text-align:left;width:140px;'><?php echo _("ILS:");?></td>
+			<td style='width:320px;'><a href="<?php echo $ilsClient->getVendorURL() . $organization->ilsID; ?>">Open vendor in <?php echo $ilsClient->getILSName(); ?></a></td>
+			</tr>
+		<?php
+		}
+
 		?>
 		</table>
 
