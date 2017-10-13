@@ -43,6 +43,9 @@ if ($enhancedCostFlag){
 	$numCols += 8; // year, sub start, sub end, cost details, invoice num
 }
 
+                                                $ilsClient = (new ILSClientSelector())->select();
+                                                $funds = $ilsClient->getFunds();
+print_r($funds);
 ?>
 
 		<div id='div_resourceForm'>
@@ -104,15 +107,21 @@ if ($enhancedCostFlag){
 								<select class='changeDefaultWhite changeInput fundID costHistoryFund' id='searchFundID'>
 									<option value='' selected></option>
 									<?php
-										$FundType = new Fund();
-										foreach($FundType->getUnArchivedFunds() as $fund)
-										{
-											$fundCodeLength = strlen($fund['fundCode']) + 3;
-											$combinedLength = strlen($fund['shortName']) + $fundCodeLength;
-											$fundName = ($combinedLength <=50) ? $fund['shortName'] : substr($fund['shortName'],0,49-$fundCodeLength) . "&hellip;";
-											$fundName .= " [" . $fund['fundCode'] . "]</option>";
-											echo "<option value='" . $fund['fundID'] . "'>" . $fundName . "</option>";
-										}
+                                        if ($config->ils->ilsConnector) {
+                                            $ilsClient = (new ILSClientSelector())->select();
+                                            $Funds = $ilsClient->getFunds();
+                                        } else {
+                                            $FundType = new Fund();
+                                            $Funds = $FundType->getUnArchivedFunds();
+                                        }
+                                        foreach($Funds as $fund)
+                                        {
+                                            $fundCodeLength = strlen($fund['fundCode']) + 3;
+                                            $combinedLength = strlen($fund['shortName']) + $fundCodeLength;
+                                            $fundName = ($combinedLength <=50) ? $fund['shortName'] : substr($fund['shortName'],0,49-$fundCodeLength) . "&hellip;";
+                                            $fundName .= " [" . $fund['fundCode'] . "]</option>";
+                                            echo "<option value='" . $fund['fundID'] . "'>" . $fundName . "</option>";
+                                        }
 									?>
 								</select>
 							</td>
@@ -219,29 +228,34 @@ if ($enhancedCostFlag){
 									<select class='changeDefaultWhite changeInput fundID costHistoryFund' id='searchFundID'>
 										<option value=''></option>
 										<?php
-											$FundType = new Fund();
-											$Funds = array();
-											if (array_key_exists('fundID', $payment) && isset($payment['fundID']))
-											{
-												$Funds = $FundType->getUnArchivedFundsForCostHistory($payment['fundID']);
-											}
-											else
-											{
-												$Funds = $FundType->getUnArchivedFunds();
-											}
-											foreach($Funds as $fund)
-											{
-												$fundCodeLength = strlen($fund['fundCode']) + 3;
-												$combinedLength = strlen($fund['shortName']) + $fundCodeLength;
-												$fundName = ($combinedLength <=50) ? $fund['shortName'] : substr($fund['shortName'],0,49-$fundCodeLength) . "&hellip;";
-												$fundName .= " [" . $fund['fundCode'] . "]</option>";
-												echo "<option";
-												if ($payment['fundID'] == $fund['fundID'])
-												{
-													echo " selected";
-												}
-												echo " value='" . $fund['fundID'] . "'>" . $fundName . "</option>";
-											}
+                                            if ($config->ils->ilsConnector) {
+                                                $ilsClient = (new ILSClientSelector())->select();
+                                                $Funds = $ilsClient->getFunds();
+                                            } else {
+                                                $FundType = new Fund();
+                                                $Funds = array();
+                                                if (array_key_exists('fundID', $payment) && isset($payment['fundID']))
+                                                {
+                                                    $Funds = $FundType->getUnArchivedFundsForCostHistory($payment['fundID']);
+                                                }
+                                                else
+                                                {
+                                                    $Funds = $FundType->getUnArchivedFunds();
+                                                }
+                                            }
+                                            foreach($Funds as $fund)
+                                            {
+                                                $fundCodeLength = strlen($fund['fundCode']) + 3;
+                                                $combinedLength = strlen($fund['shortName']) + $fundCodeLength;
+                                                $fundName = ($combinedLength <=50) ? $fund['shortName'] : substr($fund['shortName'],0,49-$fundCodeLength) . "&hellip;";
+                                                $fundName .= " [" . $fund['fundCode'] . "]</option>";
+                                                echo "<option";
+                                                if ($payment['fundID'] == $fund['fundID'])
+                                                {
+                                                    echo " selected";
+                                                }
+                                                echo " value='" . $fund['fundID'] . "'>" . $fundName . "</option>";
+                                            }
 										?>
 									</select>
 								</td>
