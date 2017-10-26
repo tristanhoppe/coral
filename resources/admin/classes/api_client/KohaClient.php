@@ -24,7 +24,11 @@ class KohaClient implements ILSClient {
      * @return key-value array with fund description
      */
     function getFunds() {
-        $response = Unirest\Request::get($this->api . "/acquisitions/funds");
+        $loginID = CoralSession::get('loginID');
+        $borrowernumber = $this->getBorrowernumber($loginID);
+        $request = $this->api . "/acquisitions/funds/";
+        if ($borrowernumber) $request .= "?budget_owner_id=$borrowernumber";
+        $response = Unirest\Request::get($request);
         # Array of StdClass Objects to array of associative arrays
         $funds = json_decode(json_encode($response->body), TRUE);
         $funds = array_map(array($this, '_vendorToCoral'), $funds);
@@ -46,6 +50,13 @@ class KohaClient implements ILSClient {
     function getILSURL() {
         return $this->api;
     }
+
+    private function getBorrowernumber($loginID) {
+        $response = Unirest\Request::get($this->api . "/patrons/?userid=$loginID");
+        $borrowers = json_decode(json_encode($response->body), TRUE);
+        return isset($borrowers[0]) ? $borrowers[0]['borrowernumber'] : null;
+    }
+
 
     /**
      * Changes the keys of a fund array from Koha keys to Coral keys
