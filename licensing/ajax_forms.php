@@ -357,14 +357,19 @@ switch ($_GET['action']) {
 
 		$display = array();
                 
+                if (!empty($documentID)){
+                            $childrenDocIDs=explode(',',rtrim($document->getChildrenDocumentIDs($_GET['documentID']),",")); //get childDocumentIDs to be removed from display.
+                        }
                 
                 if ($document->expirationDate ==''){//for unarchived one , only display other unarchived ones that can be its parent
-                
+                                                        
 		foreach($license->getDocuments() as $display) {
 			if ($document->parentDocumentID == $display->documentID) {
 				echo "<option value='" . $display->documentID . "' selected>" . $display->shortName . "</option>";
 			}else if ($document->documentID != $display->documentID) {
-				echo "<option value='" . $display->documentID . "'>" . $display->shortName . "</option>";
+                            if (!in_array($display->documentID,$childrenDocIDs))   {  
+    				echo "<option value='" . $display->documentID . "'>" . $display->shortName . "</option>";
+                            }
 			}
 		   }
                 }else{//for archived one , only display other archived ones that can be its parent
@@ -372,7 +377,9 @@ switch ($_GET['action']) {
 			if ($document->parentDocumentID == $display->documentID) {
 				echo "<option value='" . $display->documentID . "' selected>" . $display->shortName . "</option>";
 			}else if ($document->documentID != $display->documentID) {
+                             if (!in_array($display->documentID,$childrenDocIDs))   {  
 				echo "<option value='" . $display->documentID . "'>" . $display->shortName . "</option>";
+                             }
 			}
 		}
                 }
