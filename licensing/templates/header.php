@@ -67,8 +67,11 @@ $coralURL = $util->getCORALURL();
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
 <!--<script type="text/javascript" src="js/plugins/jquery.js"></script>-->
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
- <script src="https://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+ 
+ 
+ <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+ <script src="https://code.jquery.com/jquery-migrate-1.4.1.js"></script>
+ 
     
 <script type="text/javascript" src="js/plugins/ajaxupload.3.5.js"></script>
 <script type="text/javascript" src="js/plugins/thickbox.js"></script>
