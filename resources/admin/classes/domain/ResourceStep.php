@@ -17,6 +17,8 @@
 **************************************************************************************************************************
 */
 
+//TODO
+require '/home/coral/www/resources/admin/classes/domain/UserGroup.php';
 
 class ResourceStep extends DatabaseObject {
 
@@ -68,10 +70,36 @@ class ResourceStep extends DatabaseObject {
 		$this->stepStartDate = date( 'Y-m-d' );
 		$this->save();
 
+        // If we're linked to an ILS, we may have to place an order
+        error_log("startStep");
+        $this->ilsProcessingOnStartStep();
+
 		//send notifications
 		$this->sendApprovalNotification();
 
 	}
+
+    public function ilsProcessingOnStartStep() {
+        $config = new Configuration();
+        if ($config->ils->ilsConnector) {
+            $ilsClient = (new ILSClientSelector())->select();
+
+            // Find the resource
+            $resourceID = $this->resourceID;
+            $resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+
+            // Loop through earch history cost line
+            foreach ($resource->getResourcePayments() as $rp) {
+                // Place order
+                $order = array();
+                $order['basketno'] = 3;
+                $order['quantity'] = 1;
+                $order['biblionumber'] = 4877;
+                $order['budget_id'] = 6;
+                $ilsClient->placeOrder($order);
+            }
+        }
+    }
 
     public function restartReassignedStep(){
         //restart step if it's active

@@ -51,6 +51,14 @@ class KohaClient implements ILSClient {
         return $this->api;
     }
 
+    function placeOrder($order) {
+        $headers = array('Accept' => 'application/json');
+        $request = $this->api . "/acquisitions/orders/";
+        $body = Unirest\Request\Body::json($order);
+        $response = Unirest\Request::post($request, $headers, $body);
+        print_r($response);
+    }
+
     private function getBorrowernumber($loginID) {
         $response = Unirest\Request::get($this->api . "/patrons/?userid=$loginID");
         $borrowers = json_decode(json_encode($response->body), TRUE);
