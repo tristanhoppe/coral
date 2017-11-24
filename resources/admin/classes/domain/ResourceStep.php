@@ -17,9 +17,6 @@
 **************************************************************************************************************************
 */
 
-//TODO
-require '/home/coral/www/resources/admin/classes/domain/UserGroup.php';
-
 class ResourceStep extends DatabaseObject {
 
 	protected function defineRelationships() {}
@@ -81,7 +78,8 @@ class ResourceStep extends DatabaseObject {
 
     public function ilsProcessingOnStartStep() {
         $config = new Configuration();
-        if ($config->ils->ilsConnector) {
+        if ($config->ils->ilsConnector && 
+            $config->ils->ilsOrderStep == $this->stepName) {
             $ilsClient = (new ILSClientSelector())->select();
 
             // Find the resource
@@ -90,13 +88,27 @@ class ResourceStep extends DatabaseObject {
 
             // Loop through earch history cost line
             foreach ($resource->getResourcePayments() as $rp) {
-                // Place order
                 $order = array();
                 $order['basketno'] = 3;
                 $order['quantity'] = 1;
-                $order['biblionumber'] = 4877;
+                $order['biblionumber'] = 4876;
                 $order['budget_id'] = 6;
-                $ilsClient->placeOrder($order);
+                $fields = array('priceTaxExcluded', 'taxRate', 'priceTaxIncluded');
+                foreach ($fields as $field) {
+                    $order[$field] = integer_to_cost($rp->$field);
+                }
+
+                // Create
+                if (!$rp->ilsOrderlineID) {
+                    // Place order
+                    $ilsOrderlineID = $ilsClient->placeOrder($order);
+                    $rp->ilsOrderlineID = $ilsOrderlineID;
+                    $rp->save();
+                } else {
+                    // Update
+                    $order['ilsOrderlineID'] = $rp->ilsOrderlineID;
+                    $success = $ilsClient->updateOrder($order);
+                }
             }
         }
     }

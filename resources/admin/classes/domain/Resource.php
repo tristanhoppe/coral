@@ -17,10 +17,6 @@
 **************************************************************************************************************************
 */
 
-//TODO: Why?
-require '/home/coral/www/resources/admin/classes/domain/ResourcePayment.php';
-require '/home/coral/www/resources/admin/classes/common/Email.php';
-
 class Resource extends DatabaseObject {
 
 	protected function defineRelationships() {}

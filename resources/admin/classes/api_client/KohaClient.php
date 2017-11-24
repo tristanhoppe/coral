@@ -15,7 +15,15 @@ class KohaClient implements ILSClient {
     function __construct() {
         $config = new Configuration();
         $this->api = $config->ils->ilsApiUrl;
-        $this->coralToKohaKeys = array("shortName" => "name", "fundID" => "id", "fundCode" => "code");
+        $this->coralToKohaKeys = array(
+            'shortName' => 'name',
+            'fundID' => 'id',
+            'fundCode' => 'code',
+            'ilsOrderlineID' => 'ordernumber',
+            'priceTaxExcluded' => 'rrp_tax_excluded',
+            'priceTaxIncluded' => 'rrp_tax_included',
+            'taxRate' => 'tax_rate_on_ordering'
+        );
         $this->kohaToCoralKeys = array_flip($this->coralToKohaKeys);
     }
 
@@ -52,11 +60,22 @@ class KohaClient implements ILSClient {
     }
 
     function placeOrder($order) {
+        error_log("placing order");
         $headers = array('Accept' => 'application/json');
         $request = $this->api . "/acquisitions/orders/";
-        $body = Unirest\Request\Body::json($order);
+        $body = Unirest\Request\Body::json($this->_vendorToKoha($order));
         $response = Unirest\Request::post($request, $headers, $body);
-        print_r($response);
+        return $response->body->ordernumber ? $response->body->ordernumber : null;
+    }
+
+    function updateOrder($order) {
+        error_log("updating order " . $order['ilsOrderlineID']);
+        // Change to ordernumber
+        $headers = array('Accept' => 'application/json');
+        $request = $this->api . "/acquisitions/orders/";
+        $body = Unirest\Request\Body::json($this->_vendorToKoha($order));
+        $response = Unirest\Request::put($request, $headers, $body);
+        error_log(print_r($response));
     }
 
     private function getBorrowernumber($loginID) {
