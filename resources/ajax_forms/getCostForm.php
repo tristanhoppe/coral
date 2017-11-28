@@ -43,9 +43,11 @@ if ($enhancedCostFlag){
 	$numCols += 8; // year, sub start, sub end, cost details, invoice num
 }
 
-                                                $ilsClient = (new ILSClientSelector())->select();
-                                                $funds = $ilsClient->getFunds();
-print_r($funds);
+if ($config->ils->ilsConnector) {
+    $ilsClient = (new ILSClientSelector())->select();
+    $Funds = $ilsClient->getFunds();
+}
+
 ?>
 
 		<div id='div_resourceForm'>
@@ -107,10 +109,7 @@ print_r($funds);
 								<select class='changeDefaultWhite changeInput fundID costHistoryFund' id='searchFundID'>
 									<option value='' selected></option>
 									<?php
-                                        if ($config->ils->ilsConnector) {
-                                            $ilsClient = (new ILSClientSelector())->select();
-                                            $Funds = $ilsClient->getFunds();
-                                        } else {
+                                        if (!$config->ils->ilsConnector) {
                                             $FundType = new Fund();
                                             $Funds = $FundType->getUnArchivedFunds();
                                         }
@@ -228,10 +227,7 @@ print_r($funds);
 									<select class='changeDefaultWhite changeInput fundID costHistoryFund' id='searchFundID'>
 										<option value=''></option>
 										<?php
-                                            if ($config->ils->ilsConnector) {
-                                                $ilsClient = (new ILSClientSelector())->select();
-                                                $Funds = $ilsClient->getFunds();
-                                            } else {
+                                            if (!$config->ils->ilsConnector) {
                                                 $FundType = new Fund();
                                                 $Funds = array();
                                                 if (array_key_exists('fundID', $payment) && isset($payment['fundID']))
