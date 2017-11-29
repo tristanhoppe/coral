@@ -67,8 +67,6 @@
                             break;
                         }
                     }
-                    $ilsOrder = $ilsClient->getOrder($sanitizedInstance['ilsOrderlineID']);
-                    $sanitizedInstance['ilsOrderStatus'] = $ilsOrder['orderstatus'];
                 } else {
                     $fund = new Fund(new NamedArguments(array('primaryKey' => $instance->fundID)));
                     $sanitizedInstance['fundCode'] = $fund->shortName . " [" . $fund->fundCode . "]";
@@ -275,7 +273,7 @@
 				<td <?php echo $classAdd;?>><?php echo $invoiceNum; ?></td>
 			<?php } ?>
 			<?php if ($config->ils->ilsConnector){ ?>
-				<td <?php echo $classAdd;?>><?php echo ($payment['ilsOrderStatus']); ?></td>
+				<td class="ilsOrderStatus" id="ilsStatus<?php echo $payment['ilsOrderlineID'] ; ?>">wait..</td>
 			<?php } ?>
 				</tr>
 
@@ -409,6 +407,7 @@
 					</tr>
 				<?php } ?>
 			</table>
+            <script type="text/javascript" src="js/htmldata/getAcquisitionsDetails.js?random=<?php echo rand(); ?>"></script>
 		<?php
 		}else{
 			if ($user->canEdit()){
