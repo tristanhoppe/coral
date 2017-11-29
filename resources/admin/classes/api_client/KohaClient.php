@@ -63,6 +63,8 @@ class KohaClient implements ILSClient {
         error_log("placing order");
         $headers = array('Accept' => 'application/json');
         $request = $this->api . "/acquisitions/orders/";
+        // Koha expects tax rate in decimal rather than in percentage: 5.5% => 0.0550
+        if ($order['taxRate']) $order['taxRate'] = $order['taxRate'] / 100;
         $body = Unirest\Request\Body::json($this->_vendorToKoha($order));
         $response = Unirest\Request::post($request, $headers, $body);
         return $response->body->ordernumber ? $response->body->ordernumber : null;
@@ -73,6 +75,8 @@ class KohaClient implements ILSClient {
         // Change to ordernumber
         $headers = array('Accept' => 'application/json');
         $request = $this->api . "/acquisitions/orders/";
+        // Koha expects tax rate in decimal rather than in percentage: 5.5% => 0.0550
+        if ($order['taxRate']) $order['taxRate'] = $order['taxRate'] / 100;
         $body = Unirest\Request\Body::json($this->_vendorToKoha($order));
         $response = Unirest\Request::put($request, $headers, $body);
         error_log(print_r($response));
