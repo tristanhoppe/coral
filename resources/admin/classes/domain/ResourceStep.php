@@ -77,6 +77,7 @@ class ResourceStep extends DatabaseObject {
 	}
 
     public function ilsProcessingOnStartStep() {
+        error_log("ilsProcessingOnStartStep");
         $config = new Configuration();
         if ($config->ils->ilsConnector && 
             $config->ils->ilsOrderStep == $this->stepName) {
@@ -101,10 +102,12 @@ class ResourceStep extends DatabaseObject {
                 // Create
                 if (!$rp->ilsOrderlineID) {
                     // Place order
+                    error_log("Placing order");
                     $ilsOrderlineID = $ilsClient->placeOrder($order);
                     $rp->ilsOrderlineID = $ilsOrderlineID;
                     $rp->save();
                 } else {
+                    error_log("Updating order " . $rp->ilsOrderlineID);
                     // Update
                     $order['ilsOrderlineID'] = $rp->ilsOrderlineID;
                     $success = $ilsClient->updateOrder($order);

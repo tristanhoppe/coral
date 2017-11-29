@@ -19,6 +19,7 @@
 	}
 
     if ($config->ils->ilsConnector) {
+        $numCols += 1;
         $ilsClient = (new ILSClientSelector())->select();
         $ilsFunds = $ilsClient->getFunds();
     }
@@ -66,6 +67,8 @@
                             break;
                         }
                     }
+                    $ilsOrder = $ilsClient->getOrder($sanitizedInstance['ilsOrderlineID']);
+                    $sanitizedInstance['ilsOrderStatus'] = $ilsOrder['orderstatus'];
                 } else {
                     $fund = new Fund(new NamedArguments(array('primaryKey' => $instance->fundID)));
                     $sanitizedInstance['fundCode'] = $fund->shortName . " [" . $fund->fundCode . "]";
@@ -213,6 +216,9 @@
 		<?php if ($enhancedCostFlag){ ?>
 			<th><?php echo _("Invoice");?></th>
 		<?php } ?>
+		<?php if ($config->ils->ilsConnector){ ?>
+			<th><?php echo _("ILS Status");?></th>
+		<?php } ?>
 			</tr>
 </thead>
 
@@ -267,6 +273,9 @@
 				<td <?php echo $classAdd;?>><?php echo $costNote; ?></td>
 			<?php if ($enhancedCostFlag){ ?>
 				<td <?php echo $classAdd;?>><?php echo $invoiceNum; ?></td>
+			<?php } ?>
+			<?php if ($config->ils->ilsConnector){ ?>
+				<td <?php echo $classAdd;?>><?php echo ($payment['ilsOrderStatus']); ?></td>
 			<?php } ?>
 				</tr>
 

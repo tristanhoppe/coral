@@ -72,7 +72,6 @@ class KohaClient implements ILSClient {
 
     function updateOrder($order) {
         error_log("updating order " . $order['ilsOrderlineID']);
-        // Change to ordernumber
         $headers = array('Accept' => 'application/json');
         $request = $this->api . "/acquisitions/orders/";
         // Koha expects tax rate in decimal rather than in percentage: 5.5% => 0.0550
@@ -80,6 +79,13 @@ class KohaClient implements ILSClient {
         $body = Unirest\Request\Body::json($this->_vendorToKoha($order));
         $response = Unirest\Request::put($request, $headers, $body);
         error_log(print_r($response));
+    }
+
+    function getOrder($orderid) {
+        error_log("getting order $orderid");
+        $response = Unirest\Request::get($this->api . "/acquisitions/orders/$orderid");
+        $order = json_decode(json_encode($response->body), TRUE);
+        return $order;
     }
 
     private function getBorrowernumber($loginID) {
