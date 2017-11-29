@@ -18,6 +18,11 @@
 		$formWidth = 564;
 	}
 
+    if ($config->ils->ilsConnector) {
+        $ilsClient = (new ILSClientSelector())->select();
+        $ilsFunds = $ilsClient->getFunds();
+    }
+
 	$resourceID = $_GET['resourceID'];
 	$resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
 
@@ -54,9 +59,17 @@
 				if ($enhancedCostFlag && 0){
 					$sanitizedInstance['amountChange'] = $instance->getPaymentAmountChangeFromPreviousYear();
 				}
-
-				$fund = new Fund(new NamedArguments(array('primaryKey' => $instance->fundID)));
-				$sanitizedInstance['fundCode'] = $fund->shortName . " [" . $fund->fundCode . "]";
+                if ($config->ils->ilsConnector) {
+                    foreach ($ilsFunds as $fund) {
+                        if ($fund['fundID'] == $instance->fundID) {
+                            $sanitizedInstance['fundCode'] = $fund['shortName'] . " [" . $fund['fundCode'] . "]";
+                            break;
+                        }
+                    }
+                } else {
+                    $fund = new Fund(new NamedArguments(array('primaryKey' => $instance->fundID)));
+                    $sanitizedInstance['fundCode'] = $fund->shortName . " [" . $fund->fundCode . "]";
+                }
 
 				array_push($paymentArray, $sanitizedInstance);
 
