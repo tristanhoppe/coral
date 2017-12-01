@@ -43,6 +43,15 @@ class KohaClient implements ILSClient {
         return $funds;
     }
 
+    function getFund($fundid) {
+        $request = $this->api . "/acquisitions/funds/?id=$fundid";
+        $response = Unirest\Request::get($request);
+        # Array of StdClass Objects to array of associative arrays
+        $fund = json_decode(json_encode($response->body), TRUE);
+        $fund = $this->_vendorToCoral($fund);
+        return $fund[0];
+    }
+
     /**
      * Gets the ILS name
      * @return the ILS name

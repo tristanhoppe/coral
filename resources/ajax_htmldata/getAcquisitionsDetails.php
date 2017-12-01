@@ -20,8 +20,6 @@
 
     if ($config->ils->ilsConnector) {
         $numCols += 1;
-        $ilsClient = (new ILSClientSelector())->select();
-        $ilsFunds = $ilsClient->getFunds();
     }
 
 	$resourceID = $_GET['resourceID'];
@@ -60,16 +58,10 @@
 				if ($enhancedCostFlag && 0){
 					$sanitizedInstance['amountChange'] = $instance->getPaymentAmountChangeFromPreviousYear();
 				}
-                if ($config->ils->ilsConnector) {
-                    foreach ($ilsFunds as $fund) {
-                        if ($fund['fundID'] == $instance->fundID) {
-                            $sanitizedInstance['fundCode'] = $fund['shortName'] . " [" . $fund['fundCode'] . "]";
-                            break;
-                        }
-                    }
-                } else {
+                if (!$config->ils->ilsConnector) {
                     $fund = new Fund(new NamedArguments(array('primaryKey' => $instance->fundID)));
                     $sanitizedInstance['fundCode'] = $fund->shortName . " [" . $fund->fundCode . "]";
+                    $sanitizedInstance['fundID'] = $instance->fundID;
                 }
 
 				array_push($paymentArray, $sanitizedInstance);
@@ -223,14 +215,7 @@
 <tbody>
 			<?php
 			if (count($paymentArray) > 0){
-				$i=0;
 				foreach ($paymentArray as $payment){
-				$i++;
-				if ($i % 2 == 0){
-					$classAdd="class='alt'";
-				}else{
-					$classAdd="";
-				}
 				$year = $payment['year'] ? $payment['year'] : "&nbsp;";
 				$subStart = $payment['subscriptionStartDate'] ? normalize_date($payment['subscriptionStartDate']) : "&nbsp;";
 				$subEnd = $payment['subscriptionEndDate'] ? normalize_date($payment['subscriptionEndDate']) : "&nbsp;";
@@ -250,30 +235,32 @@
 				?>
 				<tr>
 			<?php if ($enhancedCostFlag){ ?>
-				<td <?php echo $classAdd;?>><?php echo $year; ?></td>
-				<td <?php echo $classAdd;?>><?php echo $subStart; ?></td>
-				<td <?php echo $classAdd;?>><?php echo $subEnd; ?></td>
+				<td><?php echo $year; ?></td>
+				<td><?php echo $subStart; ?></td>
+				<td><?php echo $subEnd; ?></td>
 			<?php } ?>
-				<td <?php echo $classAdd;?>><?php echo $fundCode; ?></td>
+				<td <?php if ($config->ils->ilsConnector) echo 'class="ilsFund" id="ilsFund' . $payment['fundID'] .'"'; ?>>
+                <?php if ($config->ils->ilsConnector) echo _("wait..."); else echo $fundCode; ?>
+                </td>
 			<?php if ($enhancedCostFlag && 0){ ?>
-				<td <?php echo $classAdd;?> style='text-align: right'><?php echo $payment['amountChange']; ?></td>
+				<td style='text-align: right'><?php echo $payment['amountChange']; ?></td>
             <?php } ?>
             <?php if ($enhancedCostFlag){ ?>
-				<td <?php echo $classAdd;?>><?php echo $cost['priceTaxExcluded']; ?></td>
-                <td <?php echo $classAdd;?>><?php echo $taxRate; ?></td>
-				<td <?php echo $classAdd;?>><?php echo $cost['priceTaxIncluded']; ?></td>
+				<td><?php echo $cost['priceTaxExcluded']; ?></td>
+                <td><?php echo $taxRate; ?></td>
+				<td><?php echo $cost['priceTaxIncluded']; ?></td>
             <?php } ?>
-				<td <?php echo $classAdd;?>><?php echo $cost['paymentAmount']; ?></td>
-				<td <?php echo $classAdd;?>><?php echo $payment['orderType']; ?></td>
+				<td><?php echo $cost['paymentAmount']; ?></td>
+				<td><?php echo $payment['orderType']; ?></td>
 			<?php if ($enhancedCostFlag){ ?>
-				<td <?php echo $classAdd;?>><?php echo $costDetails; ?></td>
+				<td><?php echo $costDetails; ?></td>
 			<?php } ?>
-				<td <?php echo $classAdd;?>><?php echo $costNote; ?></td>
+				<td><?php echo $costNote; ?></td>
 			<?php if ($enhancedCostFlag){ ?>
-				<td <?php echo $classAdd;?>><?php echo $invoiceNum; ?></td>
+				<td><?php echo $invoiceNum; ?></td>
 			<?php } ?>
 			<?php if ($config->ils->ilsConnector){ ?>
-				<td class="ilsOrderStatus" id="ilsStatus<?php echo $payment['ilsOrderlineID'] ; ?>">wait..</td>
+				<td class="ilsOrderStatus" id="ilsStatus<?php echo $payment['ilsOrderlineID'] ; ?>"><?php echo _("wait..."); ?></td>
 			<?php } ?>
 				</tr>
 
