@@ -94,7 +94,7 @@ class KohaClient implements ILSClient {
         error_log("getting order $orderid");
         $response = Unirest\Request::get($this->api . "/acquisitions/orders/$orderid");
         $order = json_decode(json_encode($response->body), TRUE);
-        return $order;
+        return isset($order['ordernumber']) ? $order : null;
     }
 
     private function getBorrowernumber($loginID) {
@@ -127,6 +127,7 @@ class KohaClient implements ILSClient {
      * @return the modified array with the new keys
      */
     private function _changeKeys($array, $keys) {
+        if (!is_array($array)) return null;
         foreach ($keys as $oldKey => $newKey) {
             if (array_key_exists($oldKey, $array)) {
                 $array[$newKey] = $array[$oldKey];
