@@ -21,6 +21,7 @@
 			$costDetailsArray   = array();  $costDetailsArray   = explode(':::',$_POST['costDetails']);
 			$costNoteArray      = array();  $costNoteArray      = explode(':::',$_POST['costNotes']);
 			$invoiceArray       = array();  $invoiceArray       = explode(':::',$_POST['invoices']);
+			$ilsArray           = array();  $ilsArray           = explode(':::',$_POST['ilsOrderlineIDs']);
 			foreach ($orderTypeArray as $key => $value){
 				if (($value) && ($paymentAmountArray[$key] || $yearArray[$key] || $fundIDArray[$key] || $costNoteArray[$key])){
 					$resourcePayment = new ResourcePayment();
@@ -40,14 +41,30 @@
 					$resourcePayment->costDetailsID = $costDetailsArray[$key];
 					$resourcePayment->costNote      = $costNoteArray[$key];
 					$resourcePayment->invoiceNum    = $invoiceArray[$key];
+                    $resourcePayment->ilsOrderlineID = $ilsArray[$key];
 					try {
 						$resourcePayment->save();
 					} catch (Exception $e) {
 						echo $e->getMessage();
 					}
+                    if ($config->ils->ilsConnector) {
+                        $ilsClient = (new ILSClientSelector())->select();
+                        $order = array();
+                        $order['basketno'] = 3;
+                        $order['quantity'] = 1;
+                        $order['biblionumber'] = 4876;
+                        $order['budget_id'] = 6;
+                        $order['ilsOrderlineID'] = $resourcePayment->ilsOrderlineID;
+                        $fields = array('priceTaxExcluded', 'taxRate', 'priceTaxIncluded');
+                        foreach ($fields as $field) {
+                            $order[$field] = integer_to_cost($resourcePayment->$field);
+                        }
+                        error_log("Updating order " . $resourcePayment->ilsOrderlineID);
+                        // Update
+                        $success = $ilsClient->updateOrder($order);
+                    }
 				}
 			}
-
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}

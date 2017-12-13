@@ -212,6 +212,7 @@ if ($config->ils->ilsConnector) {
 								foreach ($paymentArray as $payment){
 						?>
 							<tr>
+                                <input type="hidden" class="ilsOrderlineID" value="<?php echo $payment['ilsOrderlineID']; ?>" />
 								<?php if ($enhancedCostFlag){ ?>
 								<td>
 									<input type='text' value='<?php echo $payment['year']; ?>' class='changeInput year costHistoryYear' />

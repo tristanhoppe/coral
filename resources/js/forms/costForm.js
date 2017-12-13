@@ -261,7 +261,13 @@ function submitCostForm()
 		$(".paymentTable").find(".invoiceNum").each(function(id) {
 		      invoiceList += $(this).val() + ":::";
 		});
-                $('#submitCost').attr("disabled", "disabled");
+
+		ilsList ='';
+		$(".paymentTable").find(".ilsOrderlineID").each(function(id) {
+		      ilsList += $(this).val() + ":::";
+        });
+
+        $('#submitCost').attr("disabled", "disabled");
 		$.ajax({
 			type:  "POST",
 			url:   "ajax_processing.php?action=submitCost",
@@ -280,7 +286,8 @@ function submitCostForm()
 				orderTypes: orderTypeList,
 				costDetails: detailsList,
 				costNotes: costNoteList,
-				invoices: invoiceList
+				invoices: invoiceList,
+                ilsOrderlineIDs: ilsList
 			},
 			success:   function(html) {
 				if (html){

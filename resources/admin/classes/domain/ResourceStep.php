@@ -106,11 +106,6 @@ class ResourceStep extends DatabaseObject {
                     $ilsOrderlineID = $ilsClient->placeOrder($order);
                     $rp->ilsOrderlineID = $ilsOrderlineID;
                     $rp->save();
-                } else {
-                    error_log("Updating order " . $rp->ilsOrderlineID);
-                    // Update
-                    $order['ilsOrderlineID'] = $rp->ilsOrderlineID;
-                    $success = $ilsClient->updateOrder($order);
                 }
             }
         }
