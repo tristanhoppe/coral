@@ -17,7 +17,6 @@
 **************************************************************************************************************************
 */
 
-
 class ResourceStep extends DatabaseObject {
 
 	protected function defineRelationships() {}
@@ -68,10 +67,49 @@ class ResourceStep extends DatabaseObject {
 		$this->stepStartDate = date( 'Y-m-d' );
 		$this->save();
 
+        // If we're linked to an ILS, we may have to place an order
+        error_log("startStep");
+        $this->ilsProcessingOnStartStep();
+
 		//send notifications
 		$this->sendApprovalNotification();
 
 	}
+
+    public function ilsProcessingOnStartStep() {
+        error_log("ilsProcessingOnStartStep");
+        $config = new Configuration();
+        if ($config->ils->ilsConnector && 
+            $config->ils->ilsOrderStep == $this->stepName) {
+            $ilsClient = (new ILSClientSelector())->select();
+
+            // Find the resource
+            $resourceID = $this->resourceID;
+            $resource = new Resource(new NamedArguments(array('primaryKey' => $resourceID)));
+
+            // Loop through earch history cost line
+            foreach ($resource->getResourcePayments() as $rp) {
+                $order = array();
+                $order['basketno'] = 3;
+                $order['quantity'] = 1;
+                $order['biblionumber'] = 4876;
+                $order['budget_id'] = 6;
+                $fields = array('priceTaxExcluded', 'taxRate', 'priceTaxIncluded');
+                foreach ($fields as $field) {
+                    $order[$field] = integer_to_cost($rp->$field);
+                }
+
+                // Create
+                if (!$rp->ilsOrderlineID) {
+                    // Place order
+                    error_log("Placing order");
+                    $ilsOrderlineID = $ilsClient->placeOrder($order);
+                    $rp->ilsOrderlineID = $ilsOrderlineID;
+                    $rp->save();
+                }
+            }
+        }
+    }
 
     public function restartReassignedStep(){
         //restart step if it's active
