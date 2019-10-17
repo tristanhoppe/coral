@@ -48,18 +48,16 @@ $resourceArray = $resourceObj->export($whereAdd, $orderBy);
 
 
 $replace = array("/", "-");
-$excelfile = "resources_export_" . str_replace( $replace, "_", format_date( date( 'Y-m-d' ) ) ).".csv";
-
+$excelfile = "license_export_" . str_replace( $replace, "_", format_date( date( 'Y-m-d' ) ) ).".csv";
 header("Pragma: public");
 header("Content-type: text/csv");
 header("Content-Disposition: attachment; filename=\"" . $excelfile . "\"");
-
 $columns = [
-  ["header" => _("Record ID"),                     "sqlColumn" => "resourceID",                  "getValueFromRow" => function($r) { return $r['resourceID']; }],
-  ["header" => _("Name"),                          "sqlColumn" => "titleText",                   "getValueFromRow" => function($r) { return $r['titleText']; }],
-  ["header" => _("Type"),                          "sqlColumn" => "resourceType",                "getValueFromRow" => function($r) { return $r['resourceType']; }],
-  ["header" => _("Format"),                        "sqlColumn" => "resourceFormat",              "getValueFromRow" => function($r) { return $r['resourceFormat']; }],
+  ["header" => _("License ID"),                    "sqlColumn" => "licenseID",                   "getValueFromRow" => function($r) { return $r['licenseID']; }],
+  ["header" => _("Name"),                          "sqlColumn" => "shortName",                   "getValueFromRow" => function($r) { return $r['shortName']; }],
   ["header" => _("Date Created"),                  "sqlColumn" => "createDate",                  "getValueFromRow" => function($r) { return format_date($r['createDate']); }],
+  ["header" => _("Consortium Name"),               "sqlColumn" => "conName",                     "getValueFromRow" => function($r) { return $r['conName']; }]];/*,
+  ["header" => _("Format"),                        "sqlColumn" => "resourceFormat",              "getValueFromRow" => function($r) { return $r['resourceFormat']; }],
   ["header" => _("User Created"),                  "sqlColumn" => "createName",                  "getValueFromRow" => function($r) { return $r['createName']; }],
   ["header" => _("Date Updated"),                  "sqlColumn" => "updateDate",                  "getValueFromRow" => function($r) { return normalize_date($r['updateDate']); }],
   ["header" => _("User Updated"),                  "sqlColumn" => "updateName",                  "getValueFromRow" => function($r) { return $r['updateName']; }],
@@ -110,7 +108,7 @@ $columns = [
   ["header" => _("OCLC Holdings Updated"),         "sqlColumn" => "hasOclcHoldings",             "getValueFromRow" => function($r) { return ($r['hasOclcHoldings'] ? 'Y' : 'N'); }],
   ["header" => _("Resource Notes"),                "sqlColumn" => "resourceNotes",               "getValueFromRow" => function($r) { return $r['resourceNotes']; }],
   ["header" => _("Acquisition Notes"),             "sqlColumn" => "acquisitionNotes",            "getValueFromRow" => function($r) { return $r['acquisitionNotes']; }]
-];
+];*/
 $availableColumns = array_filter($columns, function($c) use ($resourceArray) {
   return array_key_exists($c["sqlColumn"], $resourceArray[0]);
 });
@@ -122,8 +120,8 @@ if (!$searchDisplay) {
 }
 echo "# " . implode('; ', $searchDisplay) . "\r\n";
 echo array_to_csv_row($columnHeaders);
-
 foreach($resourceArray as $resource) {
+  //echo "this is a thing \n";
   echo array_to_csv_row(array_map(function($column) use ($resource) {
     return $column["getValueFromRow"]($resource);
   }, $availableColumns));

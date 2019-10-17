@@ -208,7 +208,7 @@ class LicenseN extends DatabaseObject {
             JOIN License r on rr.licenseID = r.licenseID
       WHERE rr.$key = '" . $this->licenseID . "'
       AND relationshipTypeID = '1'
-      ORDER BY r.titleText";
+      ORDER BY r.shortName";
 
         $result = $this->db->processQuery($query, 'assoc');
 
@@ -474,7 +474,7 @@ class LicenseN extends DatabaseObject {
     if ($config->settings->defaultsort) {
       $orderBy = $config->settings->defaultsort;
     } else {
-      $orderBy = "R.createDate DESC, TRIM(LEADING 'THE ' FROM UPPER(R.titleText)) asc";
+      $orderBy = "R.createDate DESC, TRIM(LEADING 'THE ' FROM UPPER(R.shortName)) asc";
     }
 
     $defaultSearchParameters = array(
@@ -530,11 +530,11 @@ class LicenseN extends DatabaseObject {
       if ($config->settings->organizationsModule == 'Y') {
         $dbName = $config->settings->organizationsDatabaseName;
 
-        $whereAdd[] = "((UPPER(R.titleText) LIKE " . $nameQueryString . ") OR (UPPER(A.shortName) LIKE " . $nameQueryString . ") OR (UPPER(O.name) LIKE " . $nameQueryString . ") OR (UPPER(OA.name) LIKE " . $nameQueryString . ") OR (UPPER(RP.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RC.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RA.recordSetIdentifier) LIKE " . $nameQueryString . "))";
+        $whereAdd[] = "((UPPER(R.shortName) LIKE " . $nameQueryString . ") OR (UPPER(A.shortName) LIKE " . $nameQueryString . ") OR (UPPER(O.name) LIKE " . $nameQueryString . ") OR (UPPER(OA.name) LIKE " . $nameQueryString . ") OR (UPPER(RP.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RC.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RA.recordSetIdentifier) LIKE " . $nameQueryString . "))";
 
       }else{
 
-        $whereAdd[] = "((UPPER(R.titleText) LIKE " . $nameQueryString . ") OR (UPPER(A.shortName) LIKE " . $nameQueryString . ") OR (UPPER(O.shortName) LIKE " . $nameQueryString . ") OR (UPPER(RP.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RC.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RA.recordSetIdentifier) LIKE " . $nameQueryString . "))";
+        $whereAdd[] = "((UPPER(R.shortName) LIKE " . $nameQueryString . ") OR (UPPER(A.shortName) LIKE " . $nameQueryString . ") OR (UPPER(O.shortName) LIKE " . $nameQueryString . ") OR (UPPER(RP.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RC.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RA.recordSetIdentifier) LIKE " . $nameQueryString . "))";
 
       }
 
@@ -622,7 +622,7 @@ class LicenseN extends DatabaseObject {
     }
 
     if ($search['startWith']) {
-      $whereAdd[] = "TRIM(LEADING 'THE ' FROM UPPER(R.titleText)) LIKE UPPER('" . $license->db->escapeString($search['startWith']) . "%')";
+      $whereAdd[] = "TRIM(LEADING 'THE ' FROM UPPER(R.shortName)) LIKE UPPER('" . $license->db->escapeString($search['startWith']) . "%')";
       $searchDisplay[] = _("Starts with: ") . $search['startWith'];
     }
 
@@ -804,7 +804,7 @@ class LicenseN extends DatabaseObject {
     } else {
       $select = "SELECT
                   R.licenseID,
-                  R.titleText,
+                  R.shortName,
                   GROUP_CONCAT(DISTINCT AT.shortName SEPARATOR ' / ') as acquisitionType,
                   R.createLoginID,
                   CU.firstName,
@@ -1001,9 +1001,6 @@ License.licenseID -> Document.documentURL
     $config = new Configuration();
 
     if ($config->settings->organizationsModule == 'Y') {
-      echo $config->settings->organizationsModule;
-      echo $dbName;
-      echo "%%%%%%%%%%%%%%%%%%%%here is dbName%%%%%%%%%%%%%%%%%%%%";
       $orgJoinAdd = "
   LEFT JOIN $dbName.Organization O ON O.organizationID = ROL.organizationID
   LEFT JOIN $dbName.Alias OA ON OA.organizationID = ROL.organizationID";
@@ -1040,6 +1037,8 @@ License.licenseID -> Document.documentURL
     $status = new Status();
     //also add to not retrieve saved records
     $savedStatusID = intval($status->getIDFromName('saved'));
+    echo "this is saved stat".$savedStatusID;
+    echo "what am i doing?";
     $whereAdd[] = "R.statusID != " . $savedStatusID;
     // $whereAdd[] = "R.licenseID IN (LIST_OF_IDS)";
 
@@ -1054,6 +1053,33 @@ License.licenseID -> Document.documentURL
 
     //now actually execute query
     $query = "
+SELECT
+  R.licenseID,
+  R.shortName,
+  R.createDate,
+  CON.shortName conName
+  "./*ST.shortName,
+  O.shortName,
+  D.shortName,
+  D.effectiveDate,
+  D.expirationDate,
+  D.documentURL
+*/
+"FROM License R
+  LEFT JOIN Consortium CON ON CON.consortiumID = R.consortiumID";/*
+  LEFT JOIN Status ST ON ST.statusID = R.statusID
+  LEFT JOIN Organization O ON O.organizationID = R.organizationID
+  LEFT JOIN Document D ON D.licenseID = R.licenseID
+
+"$whereStatement"; 
+/*
+GROUP BY
+  R.licenseID,
+  R.shortName
+
+  
+";*/
+/* $orderBy  
 SELECT
   R.licenseID,
   R.shortName,
@@ -1172,7 +1198,7 @@ GROUP BY
   RA.hasOclcHoldings
 
 $orderBy
-";
+";*/
 
     // This was determined by trial and error
     $CHUNK_SIZE = 10000;
@@ -1184,8 +1210,9 @@ $orderBy
 
       $list_of_ids = implode(",", $license_id_chunk);
       $chunked_query = str_replace("LIST_OF_IDS",$list_of_ids,$query);
-      echo "TESTING ALL THE THINGS ###################################\n";
-      echo $chunked_query;
+      //echo "here is id list: ".$list_of_ids."}}}\n";
+      //echo "TESTING ALL THE THINGS ###################################\n";
+      //echo "here is chunked_query".$chunked_query;
       $result = $this->db->processQuery(stripslashes($chunked_query), 'assoc');
       //need to do this since it could be that there's only one result and this is how the dbservice returns result
       if (isset($result['licenseID'])) {
@@ -1396,10 +1423,10 @@ $orderBy
 
   public function getSiblingLicensesArray($organizationID) {
 
-      $query = "SELECT DISTINCT r.licenseID, r.titleText FROM LicenseOrganizationLink rol
+      $query = "SELECT DISTINCT r.licenseID, r. FROM LicenseOrganizationLink rol
             LEFT JOIN License r ON r.licenseID=rol.licenseID
             WHERE rol.organizationID=".$organizationID." AND r.archiveDate IS NULL
-            ORDER BY r.titleText";
+            ORDER BY r.shortName";
 
       $result = $this->db->processQuery($query, 'assoc');
 
