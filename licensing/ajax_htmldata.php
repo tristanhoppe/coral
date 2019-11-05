@@ -442,7 +442,21 @@ switch ($_GET['action']) {
 			<?php
 
 			//set everything in sessions to make form "sticky"
-			$_SESSION['license_pageStart'] = $_GET['pageStart'];
+			$getList = array(
+				"pageStart" => $_GET['pageStart'],
+				"numberOfRecords" => $_GET['numberOfRecords'],
+				"shortName" => $_GET['shortName'],
+				"organizationID" => $_GET['organizationID'],
+				"consortiumID" => $_GET['consortiumID'],
+				"statusID" => $_GET['statusID'],
+				"documentTypeID" => $_GET['documentTypeID'],
+				"startWith" => $_GET['startWith'],
+				"orderBy" => $_GET['orderBy'],
+				"expressionTypeID" => $_GET['expressionTypeID'],
+				"qualifierID" => $_GET['qualifierID']
+				);
+			$_SESSION['licenseSearch'] = $getList;
+			/*$_SESSION['license_pageStart'] = $_GET['pageStart'];
 			$_SESSION['license_numberOfRecords'] = $_GET['numberOfRecords'];
 			$_SESSION['license_shortName'] = $_GET['shortName'];
 			$_SESSION['license_organizationID'] = $_GET['organizationID'];
@@ -452,7 +466,7 @@ switch ($_GET['action']) {
 			$_SESSION['license_startWith'] = $_GET['startWith'];
 			$_SESSION['license_orderBy'] = $_GET['orderBy'];
 			$_SESSION['license_expressionTypeID'] = $_GET['expressionTypeID'];
-			$_SESSION['license_qualifierID'] = $_GET['qualifierID'];
+			$_SESSION['license_qualifierID'] = $_GET['qualifierID'];*/
 		}
 
 		break;

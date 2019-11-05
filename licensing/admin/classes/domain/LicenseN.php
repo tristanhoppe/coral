@@ -470,13 +470,13 @@ class LicenseN extends DatabaseObject {
 
   public static function setSearch($search) {
   $config = new Configuration;
-
+  echo var_dump($search);
+    echo "we get into setSeach at some point$ ".$config->settings->defaultsort."$\n";
     if ($config->settings->defaultsort) {
       $orderBy = $config->settings->defaultsort;
     } else {
       $orderBy = "R.createDate DESC, TRIM(LEADING 'THE ' FROM UPPER(R.shortName)) asc";
     }
-
     $defaultSearchParameters = array(
     "orderBy" => $orderBy,
     "page" => 1,
@@ -502,9 +502,12 @@ class LicenseN extends DatabaseObject {
 
 
   public static function getSearch() {
+    echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
     if (!CoralSession::get('licenseSearch')) {
+      echo "the search does get set#################################################\n";
       LicenseN::resetSearch();
     }
+    echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
     return CoralSession::get('licenseSearch');
   }
 
@@ -516,14 +519,16 @@ class LicenseN extends DatabaseObject {
 
     $search = LicenseN::getSearch();
 
+    echo "here is the search thing: ".$search["shortName"]."\n";
     $whereAdd = array();
     $searchDisplay = array();
     $config = new Configuration();
 
 
     //if name is passed in also search alias, organizations and organization aliases
-    if ($search['name']) {
-      $nameQueryString = $license->db->escapeString(strtoupper($search['name']));
+    echo "here is the if statement".$search['shortName']."\n";
+    if ($search['shortName']) {
+      $nameQueryString = $license->db->escapeString(strtoupper($search['shortName']));
       $nameQueryString = preg_replace("/ +/", "%", $nameQueryString);
       $nameQueryString = "'%" . $nameQueryString . "%'";
 
@@ -537,8 +542,8 @@ class LicenseN extends DatabaseObject {
         $whereAdd[] = "((UPPER(R.shortName) LIKE " . $nameQueryString . ") OR (UPPER(A.shortName) LIKE " . $nameQueryString . ") OR (UPPER(O.shortName) LIKE " . $nameQueryString . ") OR (UPPER(RP.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RC.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RA.recordSetIdentifier) LIKE " . $nameQueryString . "))";
 
       }
-
-      $searchDisplay[] = _("Name contains: ") . $search['name'];
+      echo "here is the whereadd: ".$whereAdd."\n";
+      $searchDisplay[] = _("Name contains: ") . $search['shortName'];
     }
 
     //get where statements together (and escape single quotes)
@@ -1037,13 +1042,13 @@ License.licenseID -> Document.documentURL
     $status = new Status();
     //also add to not retrieve saved records
     $savedStatusID = intval($status->getIDFromName('saved'));
-    echo "this is saved stat".$savedStatusID;
-    echo "what am i doing?";
+    echo "this is get from saved: ".($status->getIDFromName('saved'))."\n";
+    echo "this is saved stat".$savedStatusID."\n";
     $whereAdd[] = "R.statusID != " . $savedStatusID;
     // $whereAdd[] = "R.licenseID IN (LIST_OF_IDS)";
 
     $whereStatement = "WHERE " . implode(" AND ", $whereAdd);
-
+    echo "here is the where statement".$whereStatement."\n";
     if (!empty(trim($orderBy))) {
       $orderBy = "ORDER BY $orderBy";
     }
@@ -1210,9 +1215,6 @@ $orderBy
 
       $list_of_ids = implode(",", $license_id_chunk);
       $chunked_query = str_replace("LIST_OF_IDS",$list_of_ids,$query);
-      //echo "here is id list: ".$list_of_ids."}}}\n";
-      //echo "TESTING ALL THE THINGS ###################################\n";
-      //echo "here is chunked_query".$chunked_query;
       $result = $this->db->processQuery(stripslashes($chunked_query), 'assoc');
       //need to do this since it could be that there's only one result and this is how the dbservice returns result
       if (isset($result['licenseID'])) {
