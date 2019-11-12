@@ -394,7 +394,7 @@ class LicenseN extends DatabaseObject {
     } else {
       $contactsDB = $this->db->config->database->name;
     }
-
+    
     $query = "SELECT i.*,(SELECT GROUP_CONCAT(CONCAT(sc.name,' - ',sc.emailAddress) SEPARATOR ', ')
                 FROM IssueContact sic
                 LEFT JOIN `{$contactsDB}`.Contact sc ON sc.contactID=sic.contactID
@@ -502,12 +502,9 @@ class LicenseN extends DatabaseObject {
 
 
   public static function getSearch() {
-    echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
     if (!CoralSession::get('licenseSearch')) {
-      echo "the search does get set#################################################\n";
       LicenseN::resetSearch();
     }
-    echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
     return CoralSession::get('licenseSearch');
   }
 
@@ -519,14 +516,12 @@ class LicenseN extends DatabaseObject {
 
     $search = LicenseN::getSearch();
 
-    echo "here is the search thing: ".$search["shortName"]."\n";
     $whereAdd = array();
     $searchDisplay = array();
     $config = new Configuration();
 
 
     //if name is passed in also search alias, organizations and organization aliases
-    echo "here is the if statement".$search['shortName']."\n";
     if ($search['shortName']) {
       $nameQueryString = $license->db->escapeString(strtoupper($search['shortName']));
       $nameQueryString = preg_replace("/ +/", "%", $nameQueryString);
@@ -534,15 +529,14 @@ class LicenseN extends DatabaseObject {
 
       if ($config->settings->organizationsModule == 'Y') {
         $dbName = $config->settings->organizationsDatabaseName;
-
-        $whereAdd[] = "((UPPER(R.shortName) LIKE " . $nameQueryString . ") OR (UPPER(A.shortName) LIKE " . $nameQueryString . ") OR (UPPER(O.name) LIKE " . $nameQueryString . ") OR (UPPER(OA.name) LIKE " . $nameQueryString . ") OR (UPPER(RP.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RC.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RA.recordSetIdentifier) LIKE " . $nameQueryString . "))";
+        echo "what is this: ".$dbName."\n";
+        $whereAdd[] = "((UPPER(R.shortName) LIKE " . $nameQueryString . "))"; // OR (UPPER(A.shortName) LIKE " . $nameQueryString . ") OR (UPPER(O.name) LIKE " . $nameQueryString . ") OR (UPPER(OA.name) LIKE " . $nameQueryString . ") OR (UPPER(RP.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RC.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RA.recordSetIdentifier) LIKE " . $nameQueryString . "))";
 
       }else{
 
-        $whereAdd[] = "((UPPER(R.shortName) LIKE " . $nameQueryString . ") OR (UPPER(A.shortName) LIKE " . $nameQueryString . ") OR (UPPER(O.shortName) LIKE " . $nameQueryString . ") OR (UPPER(RP.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RC.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RA.recordSetIdentifier) LIKE " . $nameQueryString . "))";
+        $whereAdd[] = "((UPPER(R.shortName) LIKE " . $nameQueryString . "))";// OR (UPPER(A.shortName) LIKE " . $nameQueryString . ") OR (UPPER(O.shortName) LIKE " . $nameQueryString . ") OR (UPPER(RP.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RC.titleText) LIKE " . $nameQueryString . ") OR (UPPER(RA.recordSetIdentifier) LIKE " . $nameQueryString . "))";
 
       }
-      echo "here is the whereadd: ".$whereAdd."\n";
       $searchDisplay[] = _("Name contains: ") . $search['shortName'];
     }
 
@@ -632,6 +626,7 @@ class LicenseN extends DatabaseObject {
     }
 
     //the following are not-required fields with dropdowns and have "none" as an option
+    
     if ($search['fund'] == 'none') {
       $whereAdd[] = "((RPAY.fundID IS NULL) OR (RPAY.fundID = '0'))";
       $searchDisplay[] = _("Fund: none");
@@ -640,43 +635,66 @@ class LicenseN extends DatabaseObject {
       $whereAdd[] = "RPAY.fundID = '" . $license->db->escapeString($fund) . "'";
       $searchDisplay[] = _("Fund: ") . $search['fund'];
     }
-    if ($search['licenseTypeID'] == 'none') {
-      $whereAdd[] = "((R.licenseTypeID IS NULL) OR (R.licenseTypeID = '0'))";
-      $searchDisplay[] = _("License Type: none");
-    }else if ($search['licenseTypeID']) {
-      $whereAdd[] = "R.licenseTypeID = '" . $license->db->escapeString($search['licenseTypeID']) . "'";
-      $licenseType = new LicenseType(new NamedArguments(array('primaryKey' => $search['licenseTypeID'])));
-      $searchDisplay[] = _("License Type: ") . $licenseType->shortName;
+    $orgID = $_SESSION['licenseSearch']['organizationID'];
+    if ($orgID == 'none') {
+      $whereAdd[] = "((R.organizationID IS NULL) OR (R.organizationID = '0'))";
+      $searchDisplay[] = _("Organization: none");
+    }else if ($orgID) {
+      $whereAdd[] = "R.organizationID = '" . $license->db->escapeString($orgID) . "'";    
+      $organizationType = new Organization(new NamedArguments(array('primaryKey' => $orgID)));
+      $searchDisplay[] = _("Organization: ") . $organizationType->name;
+      
     }
 
-
-    if ($search['generalSubjectID'] == 'none') {
-      $whereAdd[] = "((GDLINK.generalSubjectID IS NULL) OR (GDLINK.generalSubjectID = '0'))";
-      $searchDisplay[] = _("License Type: none");
-    }else if ($search['generalSubjectID']) {
-      $whereAdd[] = "GDLINK.generalSubjectID = '" . $license->db->escapeString($search['generalSubjectID']) . "'";
-      $generalSubject = new GeneralSubject(new NamedArguments(array('primaryKey' => $search['generalSubjectID'])));
-      $searchDisplay[] = _("General Subject: ") . $generalSubject->shortName;
+    $conID = $_SESSION['licenseSearch']['consortiumID'];
+    if ($conID == 'none') {
+      $whereAdd[] = "((R.consortiumID IS NULL) OR (R.consortiumID = '0'))";
+      $searchDisplay[] = _("Consortium: none");
+    }else if ($conID) {
+      $whereAdd[] = "R.consortiumID = '" . $license->db->escapeString($conID) . "'";
+      $generalSubject = new Consortium(new NamedArguments(array('primaryKey' => $conID)));
+      $searchDisplay[] = _("Consortium: ") . $generalSubject->shortName;
     }
 
-    if ($search['detailedSubjectID'] == 'none') {
-      $whereAdd[] = "((GDLINK.detailedSubjectID IS NULL) OR (GDLINK.detailedSubjectID = '0') OR (GDLINK.detailedSubjectID = '-1'))";
-      $searchDisplay[] = _("License Type: none");
-    }else if ($search['detailedSubjectID']) {
-      $whereAdd[] = "GDLINK.detailedSubjectID = '" . $license->db->escapeString($search['detailedSubjectID']) . "'";
-      $detailedSubject = new DetailedSubject(new NamedArguments(array('primaryKey' => $search['detailedSubjectID'])));
-      $searchDisplay[] = _("Detailed Subject: ") . $detailedSubject->shortName;
+    $staID = $_SESSION['licenseSearch']['statusID'];
+    if ($staID == 'none') {
+      $whereAdd[] = "((R.statusID IS NULL) OR (R.statusID = '0'))";
+      $searchDisplay[] = _("Status: none");
+    }else if ($staID) {
+      $whereAdd[] = "R.statusID = '" . $license->db->escapeString($staID) . "'";
+      $generalSubject = new Status(new NamedArguments(array('primaryKey' => $staID)));
+      $searchDisplay[] = _("Status: ") . $generalSubject->shortName;
     }
 
-    if ($search['noteTypeID'] == 'none') {
-      $whereAdd[] = "(RNA.noteTypeID IS NULL) AND (RNA.noteText IS NOT NULL) AND (RNR.noteTypeID IS NULL) AND (RNR.noteText IS NOT NULL)";
-      $searchDisplay[] = _("Note Type: none");
-    }else if ($search['noteTypeID']) {
-      $whereAdd[] = "((RNA.noteTypeID = '" . $license->db->escapeString($search['noteTypeID']) . "' AND RNA.tabName <> 'Product') OR (RNR.noteTypeID = '" . $license->db->escapeString($search['noteTypeID']) . "' AND RNR.tabName = 'Product'))";
-      $noteType = new NoteType(new NamedArguments(array('primaryKey' => $search['noteTypeID'])));
-      $searchDisplay[] = _("Note Type: ") . $noteType->shortName;
+    $docID = $_SESSION['licenseSearch']['documentTypeID'];
+    if ($docID == 'none') {
+      $whereAdd[] = "((D.documentTypeID IS NULL) OR (D.documentTypeID = '0'))";
+      $searchDisplay[] = _("Document: none");
+    }else if ($docID) {
+      $whereAdd[] = "D.documentTypeID = '" . $license->db->escapeString($docID) . "'";
+      $generalSubject = new Consortium(new NamedArguments(array('primaryKey' => $docID)));
+      $searchDisplay[] = _("Document: ") . $generalSubject->shortName;
     }
 
+    $expID = $_SESSION['licenseSearch']['expressionTypeID'];
+    if ($expID == 'none') {
+      $whereAdd[] = "((E.expressionTypeID IS NULL) OR (E.expressionTypeID = '0'))";
+      $searchDisplay[] = _("Expression: none");
+    }else if ($expID) {
+      $whereAdd[] = "E.expressionTypeID = '" . $license->db->escapeString($expID) . "'";
+      $generalSubject = new ExpresionType(new NamedArguments(array('primaryKey' => $expID)));
+      $searchDisplay[] = _("Expression Type: ") . $generalSubject->shortName;
+    }
+
+    $quID = $_SESSION['licenseSearch']['qualifierID'];
+    if ($quID == 'none') {
+      $whereAdd[] = "((Q.qualifierID IS NULL) OR (Q.qualifierID = '0'))";
+      $searchDisplay[] = _("QualifierID: none");
+    }else if ($quID) {
+      $whereAdd[] = "Q.qualifierID = '" . $license->db->escapeString($quID) . "'";
+      $generalSubject = new ExpresionType(new NamedArguments(array('primaryKey' => $quID)));
+      $searchDisplay[] = _("Qualifier: ") . $generalSubject->shortName;
+    }
 
     if ($search['purchaseSiteID'] == 'none') {
       $whereAdd[] = "RPSL.purchaseSiteID IS NULL";
@@ -778,19 +796,18 @@ class LicenseN extends DatabaseObject {
   public function searchQuery($whereAdd, $orderBy = '', $limit = '', $count = false) {
     $config = new Configuration();
     $status = new Status();
-
+echo "#################################";
     if ($config->settings->organizationsModule == 'Y') {
       $dbName = $config->settings->organizationsDatabaseName;
 
       $orgJoinAdd = "
-        LEFT JOIN LicenseOrganizationLink ROL ON R.licenseID = ROL.licenseID
-        LEFT JOIN $dbName.Organization O ON O.organizationID = ROL.organizationID
-        LEFT JOIN $dbName.Alias OA ON OA.organizationID = ROL.organizationID";
+        
+        LEFT JOIN $dbName.Organization O ON O.organizationID = R.organizationID";
+        //LEFT JOIN LicenseOrganizationLink ROL ON R.licenseID = ROL.licenseIDLEFT JOIN $dbName.Alias OA ON OA.organizationID = ROL.organizationIDLEFT JOIN LicenseOrganizationLink ROL ON R.licenseID = ROL.licenseID
 
     }else{
       $orgJoinAdd = "
-        LEFT JOIN LicenseOrganizationLink ROL ON R.licenseID = ROL.licenseID
-        LEFT JOIN Organization O ON O.organizationID = ROL.organizationID";
+        LEFT JOIN Organization O ON O.organizationID = R.organizationID";
     }
 
     $savedStatusID = intval($status->getIDFromName('saved'));
@@ -1006,12 +1023,13 @@ License.licenseID -> Document.documentURL
     $config = new Configuration();
 
     if ($config->settings->organizationsModule == 'Y') {
-      $orgJoinAdd = "
-  LEFT JOIN $dbName.Organization O ON O.organizationID = ROL.organizationID
-  LEFT JOIN $dbName.Alias OA ON OA.organizationID = ROL.organizationID";
+      $dbName = $config->settings->organizationsDatabaseName;
+      //echo "why are you: ".$dbName."\n";LEFT JOIN $dbName.Alias OA ON OA.organizationID = R.organizationID
+      $orgJoinAdd = "LEFT JOIN $dbName.Organization O ON O.organizationID = R.organizationID";
+  //
       $orgSelectAdd = "  GROUP_CONCAT(DISTINCT O.name ORDER BY O.name DESC SEPARATOR '; ') organizationNames,";
     }else{
-      $orgJoinAdd = "  LEFT JOIN Organization O ON O.organizationID = ROL.organizationID";
+      $orgJoinAdd = "  LEFT JOIN Organization O ON O.organizationID = R.organizationID";
       $orgSelectAdd = "  GROUP_CONCAT(DISTINCT O.shortName ORDER BY O.shortName DESC SEPARATOR '; ') organizationNames,";
     }
 
@@ -1042,13 +1060,13 @@ License.licenseID -> Document.documentURL
     $status = new Status();
     //also add to not retrieve saved records
     $savedStatusID = intval($status->getIDFromName('saved'));
-    echo "this is get from saved: ".($status->getIDFromName('saved'))."\n";
-    echo "this is saved stat".$savedStatusID."\n";
-    $whereAdd[] = "R.statusID != " . $savedStatusID;
+   // echo "this is get from saved: ".($status->getIDFromName('saved'))."\n";
+   // echo "this is saved stat".$savedStatusID."\n";
+    //$whereAdd[] = "R.statusID != " . $savedStatusID;
     // $whereAdd[] = "R.licenseID IN (LIST_OF_IDS)";
 
     $whereStatement = "WHERE " . implode(" AND ", $whereAdd);
-    echo "here is the where statement".$whereStatement."\n";
+    //echo "here is the where statement".$whereStatement."\n";
     if (!empty(trim($orderBy))) {
       $orderBy = "ORDER BY $orderBy";
     }
@@ -1057,27 +1075,39 @@ License.licenseID -> Document.documentURL
     }
 
     //now actually execute query
+    if(strlen($whereStatement) < 7){
+      $whereStatement = "";
+    }
     $query = "
 SELECT
   R.licenseID,
   R.shortName,
   R.createDate,
-  CON.shortName conName
-  "./*ST.shortName,
-  O.shortName,
-  D.shortName,
+  CON.shortName conName,
+  ST.shortName staName,
+  O.name orgName,
+  D.shortName docName,
   D.effectiveDate,
   D.expirationDate,
-  D.documentURL
-*/
-"FROM License R
-  LEFT JOIN Consortium CON ON CON.consortiumID = R.consortiumID";/*
-  LEFT JOIN Status ST ON ST.statusID = R.statusID
-  LEFT JOIN Organization O ON O.organizationID = R.organizationID
-  LEFT JOIN Document D ON D.licenseID = R.licenseID
+  D.documentURL,
+  ET.shortName expName
 
-"$whereStatement"; 
-/*
+FROM License R
+  LEFT JOIN Consortium CON ON CON.consortiumID = R.consortiumID
+  LEFT JOIN Status ST ON ST.statusID = R.statusID
+  LEFT JOIN Document D ON D.licenseID = R.licenseID
+  LEFT JOIN Expression E ON E.documentID = D.documentID
+  LEFT JOIN ExpressionType ET ON ET.expressionTypeID = E.expressionTypeID
+  LEFT JOIN Qualifier Q ON Q.expressionTypeID = E.expressionTypeID
+  $orgJoinAdd
+  $whereStatement
+  ";
+  //echo $query;
+  /*LEFT JOIN Organization O ON O.organizationID = R.organizationID
+
+
+""; 
+
 GROUP BY
   R.licenseID,
   R.shortName

@@ -55,17 +55,20 @@ header("Content-Disposition: attachment; filename=\"" . $excelfile . "\"");
 $columns = [
   ["header" => _("License ID"),                    "sqlColumn" => "licenseID",                   "getValueFromRow" => function($r) { return $r['licenseID']; }],
   ["header" => _("Name"),                          "sqlColumn" => "shortName",                   "getValueFromRow" => function($r) { return $r['shortName']; }],
+  ["header" => _("Consortium Name"),               "sqlColumn" => "conName",                     "getValueFromRow" => function($r) { return $r['conName']; }],
+  ["header" => _("Status"),                        "sqlColumn" => "staName",                     "getValueFromRow" => function($r) { return $r['staName']; }],
+  ["header" => _("Organization"),                  "sqlColumn" => "orgName",                     "getValueFromRow" => function($r) { return $r['orgName']; }],
+  ["header" => _("Document"),                      "sqlColumn" => "docName",                     "getValueFromRow" => function($r) { return $r['docName']; }],
+  ["header" => _("Document URL"),                  "sqlColumn" => "documentURL",                 "getValueFromRow" => function($r) { return $r['documentURL']; }],
+  ["header" => _("Expession Type"),                "sqlColumn" => "expName",                     "getValueFromRow" => function($r) { return $r['expName']; }],
+  ["header" => _("Effective Date"),                "sqlColumn" => "effectiveDate",               "getValueFromRow" => function($r) { return format_date($r['effectiveDate']); }],
   ["header" => _("Date Created"),                  "sqlColumn" => "createDate",                  "getValueFromRow" => function($r) { return format_date($r['createDate']); }],
-  ["header" => _("Consortium Name"),               "sqlColumn" => "conName",                     "getValueFromRow" => function($r) { return $r['conName']; }]];/*,
-  ["header" => _("Format"),                        "sqlColumn" => "resourceFormat",              "getValueFromRow" => function($r) { return $r['resourceFormat']; }],
-  ["header" => _("User Created"),                  "sqlColumn" => "createName",                  "getValueFromRow" => function($r) { return $r['createName']; }],
+  ["header" => _("Expiration Date"),               "sqlColumn" => "expirationDate",              "getValueFromRow" => function($r) { return format_date($r['expirationDate']); }]];/*,
   ["header" => _("Date Updated"),                  "sqlColumn" => "updateDate",                  "getValueFromRow" => function($r) { return normalize_date($r['updateDate']); }],
   ["header" => _("User Updated"),                  "sqlColumn" => "updateName",                  "getValueFromRow" => function($r) { return $r['updateName']; }],
-  ["header" => _("Status"),                        "sqlColumn" => "status",                      "getValueFromRow" => function($r) { return $r['status']; }],
   ["header" => _("ISSN/ISBN"),                     "sqlColumn" => "isbnOrIssn",                  "getValueFromRow" => function($r) { return $r['isbnOrIssn']; }],
   ["header" => _("Resource URL"),                  "sqlColumn" => "resourceURL",                 "getValueFromRow" => function($r) { return $r['resourceURL']; }],
   ["header" => _("Alt URL"),                       "sqlColumn" => "resourceAltURL",              "getValueFromRow" => function($r) { return $r['resourceAltURL']; }],
-  ["header" => _("Organizations"),                 "sqlColumn" => "organizationNames",           "getValueFromRow" => function($r) { return $r['organizationNames']; }],
   ["header" => _("Year"),                          "sqlColumn" => "year",                        "getValueFromRow" => function($r) { return $r['year']; }],
   ["header" => _("Fund Name"),                     "sqlColumn" => "fundName",                    "getValueFromRow" => function($r) { return $r['fundName']; }],
   ["header" => _("Fund Code"),                     "sqlColumn" => "fundCode",                    "getValueFromRow" => function($r) { return $r['fundCode']; }],
@@ -114,9 +117,9 @@ $availableColumns = array_filter($columns, function($c) use ($resourceArray) {
 });
 $columnHeaders = array_map(function($c) { return $c["header"]; }, $availableColumns);
 
-echo "# " . _("Resource Record Export") . " " . format_date( date( 'Y-m-d' )) . "\r\n";
+echo "# " . _("License Record Export") . " " . format_date( date( 'Y-m-d' )) . "\r\n";
 if (!$searchDisplay) {
-  $searchDisplay = array(_("All Resource Records"));
+  $searchDisplay = array(_("All License Records"));
 }
 echo "# " . implode('; ', $searchDisplay) . "\r\n";
 echo array_to_csv_row($columnHeaders);
