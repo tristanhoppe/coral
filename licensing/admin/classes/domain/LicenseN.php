@@ -227,20 +227,6 @@ class LicenseN extends DatabaseObject {
       $searchDisplay[] = _("Qualifier: ") . $generalSubject->shortName;
     }
 
-    
-    /*if ($search['publisher']) {
-      $nameQueryString = $license->db->escapeString(strtoupper($search['publisher']));
-      $nameQueryString = preg_replace("/ +/", "%", $nameQueryString);
-        $nameQueryString = "'%" . $nameQueryString . "%'";
-      if ($config->settings->organizationsModule == 'Y'){
-        $dbName = $config->settings->organizationsDatabaseName;
-        $whereAdd[] = "ROL.organizationRoleID=5 AND ((UPPER(O.name) LIKE " . $nameQueryString . ") OR (UPPER(OA.name) LIKE " . $nameQueryString . "))";
-      }else{
-        $whereAdd[] = "ROL.organizationRoleID=5 AND (UPPER(O.shortName) LIKE " . $nameQueryString . ")";
-      }
-      $searchDisplay[] = _("Publisher name contains: ") . $search['publisher'];
-    }*/
-
 
     $orderBy = $search['orderBy'];
 
