@@ -442,6 +442,7 @@ switch ($_GET['action']) {
 			<?php
 
 			//set everything in sessions to make form "sticky"
+			//This is an array used by LicenseN.php
 			$getList = array(
 				"pageStart" => $_GET['pageStart'],
 				"numberOfRecords" => $_GET['numberOfRecords'],
@@ -456,7 +457,9 @@ switch ($_GET['action']) {
 				"qualifierID" => $_GET['qualifierID']
 				);
 			$_SESSION['licenseSearch'] = $getList;
-			/*$_SESSION['license_pageStart'] = $_GET['pageStart'];
+
+			//This is used in index.php
+			$_SESSION['license_pageStart'] = $_GET['pageStart'];
 			$_SESSION['license_numberOfRecords'] = $_GET['numberOfRecords'];
 			$_SESSION['license_shortName'] = $_GET['shortName'];
 			$_SESSION['license_organizationID'] = $_GET['organizationID'];
@@ -466,7 +469,7 @@ switch ($_GET['action']) {
 			$_SESSION['license_startWith'] = $_GET['startWith'];
 			$_SESSION['license_orderBy'] = $_GET['orderBy'];
 			$_SESSION['license_expressionTypeID'] = $_GET['expressionTypeID'];
-			$_SESSION['license_qualifierID'] = $_GET['qualifierID'];*/
+			$_SESSION['license_qualifierID'] = $_GET['qualifierID'];
 		}
 
 		break;
