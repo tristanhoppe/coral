@@ -923,6 +923,7 @@ switch ($_GET['action']) {
 		}else{
 			$thisPageNum = count($organizationArray) + $pageStart - 1;
 			echo "<span style='font-weight:bold;'>"._("Displaying ") . $pageStart . _(" to ") . $thisPageNum . _(" of ") . $totalRecords . _(" Organization Records")."</span><br />";
+			echo "</span><span style='float:right;width:34px;'><a href='javascript:void(0);'><img src='images/xls.gif' id='export'></a></span>";
 
 			//print out page selectors
 			if ($totalRecords > $numberOfRecords){
