@@ -483,7 +483,7 @@ FROM License R
   LEFT JOIN Qualifier Q ON Q.expressionTypeID = E.expressionTypeID
   $orgJoinAdd
   $whereStatement
-  GROUP BY
+  ORDER BY
     R.licenseID,
     R.shortName
   
