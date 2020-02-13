@@ -1075,6 +1075,17 @@ switch ($_GET['action']) {
 			<?php
 		}
 
+
+		$getList = array(
+			"pageStart" => $_GET['pageStart'],
+			"numberOfRecords" => $_GET['numberOfRecords'],
+			"organizationName" => $_GET['organizationName'],
+			"organizationRoleID" => $_GET['organizationRoleID'],
+			"contactName" => $_GET['contactName'],
+			"startWith" => $_GET['startWith'],
+			"orderBy" => $_GET['orderBy'],
+			);
+		$_SESSION['OrgSearch'] = $getList;
 		//set everything in sessions to make form "sticky"
 		$_SESSION['org_pageStart'] = $_GET['pageStart'];
 		$_SESSION['org_numberOfRecords'] = $_GET['numberOfRecords'];
